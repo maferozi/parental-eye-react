@@ -13,7 +13,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 
 function App() {
-  const navigate = useNavigate()
   const queryClient = new QueryClient()
   const routing = useRoutes(app_routes);
   const { setUser, setIsLoading } = useContext(AuthContext);
@@ -29,7 +28,6 @@ function App() {
       setAuthToken(token);
       const response = await me(token);
       setUser(response.user);
-      navigate('/');
       setIsLoading(false);
 
     } catch (error) {

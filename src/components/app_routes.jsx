@@ -21,7 +21,7 @@ const Reports = Loadable(lazy(() => import("../views/Reports")))
 const app_routes = [
     {
         path: "/auth",
-        element: <Auth />,
+        element: <RouteGuard><Auth /></RouteGuard>,
         children: [
             { path: '/auth/login', exact: true, element: <Login /> },
             { path: '/auth/register', exact: true, element: <Register /> },
@@ -31,12 +31,12 @@ const app_routes = [
     {
         path: '/',
 
-        element: <Layout />,
+        element:<RouteGuard> <Layout /></RouteGuard>,
         children: [
             { path: '', exact: true, element: <Navigate to="/home" /> },
-            { path: '/home', exact: true, element: <RouteGuard> <Home /> </RouteGuard> },
-            { path: '/company', exact: true, element: <RouteGuard> <Company /> </RouteGuard> },
-            { path: '/reports', exact: true, element: <RouteGuard> <Reports /> </RouteGuard> },
+            { path: '/home', exact: true, element:  <Home />  },
+            { path: '/company', exact: true, element:  <Company />  },
+            { path: '/reports', exact: true, element:  <Reports />  },
             { path: '*', element: <Navigate to="/home" /> },
         ],
     },
