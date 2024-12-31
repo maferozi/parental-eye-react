@@ -9,7 +9,7 @@ function SideBar() {
       <div className="mb-4">
         <h5 className="text-center">
           <Link to={"/home"}>
-            <img src="/public/arrow.png" width={40} alt="Image of Project" />
+            <img src="/arrow.png" width={40} alt="Image of Project" />
             Parental Eye
           </Link>
         </h5>
