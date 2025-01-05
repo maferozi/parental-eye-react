@@ -5,7 +5,7 @@ import { Outlet } from 'react-router'
 function Layout() {
   return (
     <div className="d-flex vh-100 overflow-hidden">
-      <div style={{ width: '250px' }}>
+      <div style={{ width: '300px' }}>
         <SideBar />
       </div>
 
