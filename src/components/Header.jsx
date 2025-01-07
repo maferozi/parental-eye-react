@@ -4,23 +4,35 @@ import { AuthContext } from '../context/AuthContext';
 import proImg from '../assets/images/user-1.jpg'
 import { useNavigate } from 'react-router';
 
-const Header = () => {
-  const { logout } = useContext(AuthContext);
+const Header = ({
+  setShowSideBar,
+  showSideBar,
+}) => {
+  const { logout, user, isLoading } = useContext(AuthContext);
+  
   const navigate = useNavigate()
+  const sidebarToggler = () => {
+    setShowSideBar(true);
+    const mainWrapper = document.querySelector(".sidebar--container");
+    mainWrapper.classList.remove("collapse--sidebar"); 
+    mainWrapper.classList.add("expand--sidebar"); 
+  };
+
   const handdleLogout = () => {
     logout();
     navigate('/auth/login');
   }
   return (
-    <Navbar bg="light" className="px-4 shadow-sm d-flex justify-content-between">
-      <div className="d-flex align-items-center">
-        <i className="bi bi-list fs-4"></i>
-      </div>
-
-      <Nav className="d-flex align-items-center">
-
-        <Dropdown align="end">
-          <Dropdown.Toggle variant="light" className="d-flex align-items-center border-0">
+    <nav className="navbar navbar-light w-100 bg-transparent p-2 "> 
+          {showSideBar == false?  <a
+            onClick={sidebarToggler}
+            className="nav-link sidebartoggler nav-icon-hover flex-grow-1"
+          >
+            <i className="ti ti-menu-2 fs-7"></i>
+          </a>: <div className='flex-grow-1'></div>}
+        <Dropdown align="end" className="me-auto align-self-end">
+        
+          <Dropdown.Toggle variant="light" className="d-flex align-items-center border-0 shadow-md">
             <Image
               src={proImg}
               alt="Profile"
@@ -29,7 +41,7 @@ const Header = () => {
               height={32}
               className="me-2"
             />
-            Parental Eye Admin
+            {user && user.firstName}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
@@ -39,8 +51,9 @@ const Header = () => {
             <Dropdown.Item ><button onClick={handdleLogout} className='btn btn-outline-warning'> Logout</button></Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-      </Nav>
-    </Navbar>
+
+      
+    </nav>
   );
 };
 

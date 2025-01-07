@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.7",
+    "@tanstack/react-table": "^8.20.6",
     "axios": "^1.6.2",
     "bootstrap": "^5.3.3",
     "formik": "^2.4.6",
@@ -31,6 +32,7 @@
     "react-to-print": "^3.0.2",
     "react-toastify": "^10.0.6",
     "reactstrap": "^9.2.3",
+    "simplebar-react": "^3.3.0",
     "sweetalert2": "^11.15.0",
     "to-words": "^4.2.0",
     "yup": "^1.4.0"

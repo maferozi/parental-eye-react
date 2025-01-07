@@ -9,12 +9,20 @@ import Layout from './Layout/Layout';
 import RouteGuard from './RouteGuard';
 
 
+
 /* ***Layouts**** */
 const Auth = Loadable(lazy(() => import('../views/Auth/Auth')));
 const Login = Loadable(lazy(() => import('../views/Auth/Login')));
 const Register = Loadable(lazy(() => import('../views/Auth/Register')));
 const Forget = Loadable(lazy(() => import('../views/Auth/Forget')));
 const Home = Loadable(lazy(() => import("../views/Home")))
+const AdminDashboard = Loadable(lazy(() => import("../views/Admin/Dashboard")));
+const AdminDevice = Loadable(lazy(() => import("../views/Admin/DeviceManagement")));
+const AdminUserManagemnet = Loadable(lazy(() => import("../views/Admin/UserManagement")));
+const AdminGeofence = Loadable(lazy(() => import("../views/Admin/Geofence")));
+const AdminNotification = Loadable(lazy(() => import("../views/Admin/Notification")));
+
+
 const Company = Loadable(lazy(() => import("../views/Company")))
 const Reports = Loadable(lazy(() => import("../views/Reports")))
 
@@ -34,9 +42,11 @@ const app_routes = [
         element:<RouteGuard> <Layout /></RouteGuard>,
         children: [
             { path: '', exact: true, element: <Navigate to="/home" /> },
-            { path: '/home', exact: true, element:  <Home />  },
-            { path: '/company', exact: true, element:  <Company />  },
-            { path: '/reports', exact: true, element:  <Reports />  },
+            { path: '/dashboard', exact: true, element:  <AdminDashboard/>  },
+            { path: '/user-management', exact: true, element:  <AdminUserManagemnet />  },
+            { path: '/device', exact: true, element:  <AdminDevice />  },
+            { path: '/geofence', exact: true, element:  <AdminGeofence />  },
+            { path: '/notification', exact: true, element:  <AdminNotification />  },
             { path: '*', element: <Navigate to="/home" /> },
         ],
     },

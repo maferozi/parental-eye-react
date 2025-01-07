@@ -1,54 +1,179 @@
-import React from 'react'
-import { Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import logo from '/logo.png';
+import userImg from '../assets/images/user-1.jpg';
+import { Link, NavLink } from 'react-router-dom';
+import SignInButton from './SignInButton';
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
+import { motion } from 'framer-motion';
 
-function SideBar() {
-  return (
+const container = {
+    hidden: { opacity: 1, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1
+    }
+  }; 
 
-    <div className="d-flex flex-column vh-100 pt-3 bg-light shadow shadow-lg" style={{ width: '300px' }}>
-      <div className="mb-4">
-        <h5 className="text-start ps-3">
-          <Link to={"/home"}>
-            <img src="/logo.png" width={40} alt="Image of Project" />
-          </Link>
-        </h5>
-      </div>
-      <Nav className="flex-column">
-        <Nav.Link href="#" className="text-muted">
-          <Link to="/home" className='btn btn-outline-primary  rounded-3 shadow shadow-sm w-100 text-start'>
-            <i className="ti ti-home"></i> Dashboard
-          </Link>
-        </Nav.Link>
-        <Nav.Link href="#" className="text-muted">
-          <Link to="/profile" className='btn btn-outline-primary  rounded-3 shadow shadow-sm w-100 text-start'>
-            <i className="ti ti-user"></i> User manage
-          </Link>
-          </Nav.Link>
-          <Nav.Link href="#" className="text-muted">
-          <Link to="/profile" className='btn btn-outline-primary  rounded-3 shadow shadow-sm w-100 text-start'>
-            <i className="ti ti-cpu-2"></i> Device manage
-          </Link>
-          </Nav.Link>
-          <Nav.Link href="#" className="text-muted">
-          <Link to="/profile" className='btn btn-outline-primary  rounded-3 shadow shadow-sm w-100 text-start'>
-            <i className="ti ti-map-pins"></i> GeoFance manage
-          </Link>
-          </Nav.Link>
-          <Nav.Link href="#" className="text-muted">
-          <Link to="/profile" className='btn btn-outline-primary  rounded-3 shadow shadow-sm w-100 text-start'>
-            <i className="ti ti-bell-ringing"></i> Notification manage
-          </Link>
-          </Nav.Link>
+function Sidebar({
+    isLoading,
+    user,
+    logout,
+    showSideBar,
+    setShowSideBar,
+}) {
+    const sidebarToggler = () => {
+        setShowSideBar(false);
+        const mainWrapper = document.querySelector(".sidebar--container");
+        mainWrapper.classList.remove("expand--sidebar");
+        mainWrapper.classList.add("collapse--sidebar");
+        
+    // Toggle the show-sidebar class on the #main-wrapper element
+    // const mainWrapper = document.getElementById("main-wrapper");
+    // mainWrapper.classList.toggle("show-sidebar");
+
+    // Toggle data-sidebartype attribute on the body element
+    // const body = document.querySelector("body");
+    // const dataTheme = body.getAttribute("data-sidebartype");
+    // if (dataTheme === "full") {
+    //   body.setAttribute("data-sidebartype", "mini-sidebar");
+    // } else {
+    //   body.setAttribute("data-sidebartype", "full");
+    // }
+    };
+
+    const onLogoutClick = () => {
+        logout();
+    };
+
+    return (
+        <div className='vh-100 bg-light d-flex flex-column shadow-md-black'>
+        <div className="p-3 d-flex align-items-center justify-content-start">
+        <NavLink to={'/home'} className="text-nowrap logo-img">
+                        <img
+                            src={logo}
+                            className="dark-logo transition--custom"
+                            style={{
+                                width: showSideBar ? '70px' : '50px',
+                            }}
+                            alt="Logo-Dark"
+                        />
+                    </NavLink>
+                    {showSideBar && (
+                        <a
+                            onClick={sidebarToggler}
+                            className="sidebartoggler ms-auto text-decoration-none fs-5 d-block"
+                        >
+                            <i className="ti ti-x"></i>
+                        </a>
+                    )}
+        </div>
+
+    <div className='flex-grow-1'>
+
+        <SimpleBar style={{ maxHeight: '78vh', overflowX: 'hidden' }} autoHide={false}>
+            <nav className="sidebar-nav scroll-sidebar p-3 " >
+
+                <motion.ul id="sidebarnav" className='d-flex flex-column gap-2' variants={container}
+    initial="hidden"
+    animate="visible">
+                    <motion.li variants={item} className="sidebar-item">
+                        <NavLink to={'/dashboard'} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
+
+                        aria-expanded="false">
+                            <span>
+                                <i className="ti ti-home"></i>
+                            </span>
+                            {showSideBar && (
+                                <span className="hide-menu ">Dashboard</span>
+                            )}
+                        </NavLink>
+                    </motion.li>
+                    <motion.li variants={item} className="sidebar-item">
+                        <NavLink to={'/user-management'} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
+
+                        aria-expanded="false">
+                            <span>
+                                <i className="ti ti-users"></i>
+                            </span>
+                            {showSideBar && (
+                                <span className="hide-menu ">User Management</span>
+                            )}
+                        </NavLink>
+                    </motion.li>
+                    <motion.li variants={item} className="sidebar-item">
+                        <NavLink to={'/device'} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
+
+                        aria-expanded="false">
+                            <span>
+                                <i className="ti ti-devices"></i>
+                            </span>
+                            {showSideBar && (
+                            <span className="hide-menu ">Device Management</span>
+                            )}
+                        </NavLink>
+                    </motion.li>
+                    <motion.li variants={item} className="sidebar-item">
+                        <NavLink to={'/geofence'} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
+
+                        aria-expanded="false">
+                            <span>
+                                <i className="ti ti-map"></i>
+                            </span>
+                            {showSideBar && (
+                                <span className="hide-menu ">GeoFencing</span>
+                            )}
+                        </NavLink>
+                    </motion.li>
+                    <motion.li variants={item} className="sidebar-item">
+                        <NavLink to={'/notification'} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
+
+                        aria-expanded="false">
+                            <span>
+                                <i className="ti ti-bell"></i>
+                            </span>
+                            {showSideBar && (
+                            <span className="hide-menu ">Notification</span>
+                            )}
+                        </NavLink>
+                    </motion.li>
 
 
-          <Nav.Link href="#" className="text-muted">
-          <Link to="/profile" className='btn btn-outline-primary  rounded-3 shadow shadow-sm w-100 text-start'>
-            <i className="ti ti-bell-ringing"></i> Notification manage
-          </Link>
-          </Nav.Link>
-      </Nav>
-    </div>
-  )
+                </motion.ul>
+            </nav>
+        </SimpleBar>
+        </div>
+
+        <div
+                className={` btn align-self-center m-3 btn-outline-warning d-flex ${
+                showSideBar ? "justify-content-start" : "justify-content-center"
+            } align-items-center gap-2`}
+            aria-expanded="false"
+        >
+            <span>
+                <i className="ti ti-logout fw-bolder"></i>
+            </span>
+            {showSideBar && (
+                <span className="hide-menu fw-bolder">Logout</span>
+            )}
+        </div>
+    
+        </div>
+
+
+    );
 }
 
-export default SideBar
+export default Sidebar;
