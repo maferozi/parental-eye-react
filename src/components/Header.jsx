@@ -23,7 +23,7 @@ const Header = ({
     navigate('/auth/login');
   }
   return (
-    <nav className="navbar navbar-light w-100 bg-transparent p-2 "> 
+    <nav className="navbar navbar-light bg-tranparent w-100 p-2 "> 
           {showSideBar == false?  <a
             onClick={sidebarToggler}
             className="nav-link sidebartoggler nav-icon-hover flex-grow-1"

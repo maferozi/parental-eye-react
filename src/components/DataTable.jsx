@@ -34,7 +34,7 @@ const DataTable = ({
       return (
         <tr>
           <td colSpan={columns?.length} className="text-center">
-            <NoData title={noDataTitle} />
+            <h6 className="fs-4 fw-semibold mb-0">{noDataTitle}</h6>
           </td>
         </tr>
       );
