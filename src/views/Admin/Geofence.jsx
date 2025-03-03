@@ -1,45 +1,40 @@
-import React from 'react';
-import { Table } from 'reactstrap';
+import React from "react";
+import { MapContainer, TileLayer, Polyline } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import { useQuery } from "@tanstack/react-query";
-import { getLocationById } from '../../api/location';
+import { getLocationById } from "../../api/location";
 
-const GeofenceTable = () => {
-    const geofences = [
-        { id: 1, name: 'Geofence 1', latitude: '40.7128', longitude: '-74.0060', radius: '100m' },
-        { id: 2, name: 'Geofence 2', latitude: '34.0522', longitude: '-118.2437', radius: '200m' },
-        { id: 3, name: 'Geofence 3', latitude: '51.5074', longitude: '-0.1278', radius: '150m' },
-    ];
-
-  const { data: location, isLoading, refetch:refetchDevice } = useQuery({
+const GeofenceMap = () => {
+  // Fetch location data
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["location"],
-    queryFn: () => getLocationById({userId: 51}),
+    queryFn: () => getLocationById({ userId: 51 }),
   });
 
+  if (isLoading) return <p>Loading map...</p>;
+  if (isError || !data?.location?.length) return <p>Error loading map data.</p>;
 
-    return (
-        <Table striped>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Latitude</th>
-                    <th>Longitude</th>
-                    <th>Radius</th>
-                </tr>
-            </thead>
-            <tbody>
-                {geofences.map((geofence) => (
-                    <tr key={geofence.id}>
-                        <td>{geofence.id}</td>
-                        <td>{geofence.name}</td>
-                        <td>{geofence.latitude}</td>
-                        <td>{geofence.longitude}</td>
-                        <td>{geofence.radius}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </Table>
-    );
+  // Extract path coordinates for Polyline
+  const pathCoordinates = data.location.map((loc) => [
+    loc.location.coordinates[1], // Latitude
+    loc.location.coordinates[0], // Longitude
+  ]);
+
+  // Center the map on the first coordinate
+  const center = pathCoordinates.length > 0 ? pathCoordinates[0] : [31.5, 74.3];
+
+  return (
+    <MapContainer center={center} zoom={18} style={{ height: "500px", width: "100%" }}>
+      {/* OpenStreetMap Tile Layer (Free) */}
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+
+      {/* Draw Polyline for the Path */}
+      <Polyline positions={pathCoordinates} color="red" />
+    </MapContainer>
+  );
 };
 
-export default GeofenceTable;
+export default GeofenceMap;

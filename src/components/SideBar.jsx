@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import logo from '/logo.png';
 import userImg from '../assets/images/user-1.jpg';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import SignInButton from './SignInButton';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
@@ -31,7 +31,6 @@ const container = {
 function Sidebar({
     isLoading,
     
-    logout,
     showSideBar,
     setShowSideBar,
 }) {
@@ -40,6 +39,7 @@ function Sidebar({
         const mainWrapper = document.querySelector(".sidebar--container");
         mainWrapper.classList.remove("expand--sidebar");
         mainWrapper.classList.add("collapse--sidebar");
+
         
     // Toggle the show-sidebar class on the #main-wrapper element
     // const mainWrapper = document.getElementById("main-wrapper");
@@ -55,11 +55,13 @@ function Sidebar({
     // }
     };
 
-    const { user } = useContext(AuthContext);
-
-    const onLogoutClick = () => {
+    const { logout, user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const handdleLogout = () => {
         logout();
-    };
+        navigate('/auth/login');
+      }
+
 
     return (
         <div className='vh-100 bg-light d-flex flex-column shadow-md-black'>
@@ -164,6 +166,7 @@ function Sidebar({
                 showSideBar ? "justify-content-start" : "justify-content-center"
             } align-items-center gap-2`}
             aria-expanded="false"
+            onClick={handdleLogout} 
         >
             <span>
                 <i className="ti ti-logout fw-bolder"></i>
