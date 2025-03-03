@@ -2,7 +2,8 @@ import React from 'react'
 
 function Home() {
   return (<>
-    Home goes here
+    <button className='btn btn-primary'>Button</button>
+    <h1 className='text-primary'>Home goes here</h1>
   </>
   )
 }

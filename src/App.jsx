@@ -1,4 +1,4 @@
-import './App.css'
+
 import { useNavigate, useRoutes } from 'react-router';
 import app_routes from './components/app_routes';
 import { AuthContext } from './context/AuthContext';

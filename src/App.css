@@ -27,3 +27,40 @@
   font-weight: bolder;
   text-decoration: underline;
 }
+
+
+.expand--sidebar{
+  width: 300px;
+  transition: 0.5s;
+}
+.collapse--sidebar{
+  width: 80px;
+  transition: 0.5s;
+}
+.transition--custom {
+  transition: all 0.4s ease-in-out;
+}
+
+
+.notification--custom{
+  
+  padding: 0.8rem;
+}
+.notification--custom:hover{
+  color: white;
+  background-color: #9BB1F3;
+}
+
+
+@media screen and (max-width: 768px) {
+  .expand--sidebar {
+    width: 100%;
+    transition: 0.5s;
+  }
+  .layout-sidebar--custom{
+    flex-direction: column;
+  }
+  .collapse--sidebar {
+    display: none;
+  }
+}
