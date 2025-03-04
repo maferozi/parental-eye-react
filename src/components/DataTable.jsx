@@ -24,7 +24,7 @@ const DataTable = ({
   const body = () => {
     if (loading)
       return [1, 2, 3, 4, 5].map((key, index) => (
-        <tr key={row.id || index}>
+        <tr key= {index}>
           <td colSpan={columns?.length} className="text-center">
             <Skeleton height={30} />
           </td>

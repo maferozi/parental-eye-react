@@ -71,16 +71,16 @@ const UserManagement = () => {
             <i className="ti ti-dots"></i>
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item onClick={async() => {
+            <Dropdown.Item className="text-danger" onClick={async() => {
               await deleteInvitedUser(item.id);
               if(item.type === 1) refetchChild();
               if(item.type === 2) refetchDriver();
             }}>
               Delete
             </Dropdown.Item>
-            <Dropdown.Item onClick={()=>{handdleUpdateUser(item.id)}}>Update</Dropdown.Item>
-            {item.status == 1 && <Dropdown.Item onClick={()=>{handdleUnpair(item.id, item.type)}}>Unpair</Dropdown.Item>}
-            {item.status == 2 && <Dropdown.Item onClick={()=>{handdleUnpair(item.id, item.type)}}>Pair</Dropdown.Item>}
+            {item.status == 1 && <Dropdown.Item className="text-danger" onClick={()=>{handdleUnpair(item.id, item.type)}}>Unpair</Dropdown.Item>}
+            {item.status == 2 && <Dropdown.Item className="text-success" onClick={()=>{handdleUnpair(item.id, item.type)}}>Pair</Dropdown.Item>}
+            <Dropdown.Item className="text-warning" onClick={()=>{handdleUpdateUser(item.id)}}>Update</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </td>
