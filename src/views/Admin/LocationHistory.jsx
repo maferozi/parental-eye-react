@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { useQuery } from "@tanstack/react-query";
 import { getLocationById } from "../../api/location";
 
-const GeofenceMap = () => {
+const LocationHistory = () => {
   // Fetch location data
   const { data, isLoading, isError } = useQuery({
     queryKey: ["location"],
@@ -37,4 +37,4 @@ const GeofenceMap = () => {
   );
 };
 
-export default GeofenceMap;
+export default LocationHistory;

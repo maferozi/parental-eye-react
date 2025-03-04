@@ -64,7 +64,7 @@ const UserManagement = () => {
     <tr key={item.id}>
       <td>{item.fullName}</td>
       <td>{item.type === 2 ? "Driver" : "Child"}</td>
-      <td>{item.status === 1 ? "Paired" : "Unpaired"}</td>
+      <td className={`${item.status == 2 ? 'text-success': 'text-warning'}`}>{item.status === 2 ? "Paired" : "Unpaired"}</td>
       <td>
         <Dropdown>
           <Dropdown.Toggle variant="light">

@@ -96,8 +96,8 @@ const AdminDeviceManagement = () => {
   const renderRow = (item) => (
     <tr key={item.id}>
       <td>{item.deviceName}</td>
-      <td>{item.userId != null ? item.userId : 'Free'}</td>
-      <td>{item.status === 2 ? "Active" : "Inactive"}</td>
+      <td className={`${item.userId != null ? 'text-success': 'text-danger'}`}>{item.userId != null ? item.userId : 'Free'}</td>
+      <td className={`${item.status == 2 ? 'text-success': 'text-warning'}`}>{item.status === 2 ? "Active" : "Inactive"}</td>
       <td>
         <Dropdown>
           <Dropdown.Toggle variant="light">

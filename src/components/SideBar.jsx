@@ -143,6 +143,18 @@ function Sidebar({
                         </NavLink>
                     </motion.li>
                     <motion.li variants={item} className="sidebar-item">
+                        <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/history`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
+
+                        aria-expanded="false">
+                            <span>
+                                <i className="ti ti-history"></i>
+                            </span>
+                            {showSideBar && (
+                                <span className="hide-menu ">Location History</span>
+                            )}
+                        </NavLink>
+                    </motion.li>
+                    <motion.li variants={item} className="sidebar-item">
                         <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/notification`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
 
                         aria-expanded="false">
