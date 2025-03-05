@@ -7,6 +7,10 @@ import { getLocationById, getUserWithLocationHistory } from "../../api/location"
 import DataTable from "../../components/DataTable";
 import { useSearchParams } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const LocationHistory = () => {
   const [modal, setModal] = useState(false);
@@ -14,15 +18,42 @@ const LocationHistory = () => {
   const [pageNo, setPageNo] = useState(1);
   const [pageSize] = useState(5);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const userId = searchParams.get("userId");
+  const startDate = searchParams.get("startDate") ? new Date(searchParams.get("startDate")) : today;
+  const endDate = searchParams.get("endDate") ? new Date(searchParams.get("endDate")) : today;
   
-  const userId = searchParams.get("userId");  // Get userId from query params
   const queryClient = useQueryClient();
 
-  // Fetch location data based on userId from query params
+  // Get today's date
+  const today = new Date();
+
+  // Formik Initial Values
+  const initialValues = {
+    startDate: today,
+    endDate: today,
+  };
+
+  // Yup Validation Schema
+  const validationSchema = Yup.object({
+    startDate: Yup.date().required("Start date is required"),
+    endDate: Yup.date()
+      .required("End date is required")
+      .min(Yup.ref("startDate"), "End date must be after start date"),
+  });
+
+  // Fetch location data based on userId and date range
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["location", userId],
-    queryFn: () => userId ? getLocationById({ userId }) : Promise.resolve(null),
-    enabled: !!userId,  // Only fetch if userId exists
+    queryKey: ["location", userId, startDate, endDate],
+    queryFn: () =>
+      userId
+        ? getLocationById({ 
+            userId, 
+            startDate: startDate ? startDate.toISOString().split("T")[0] : null, 
+            endDate: endDate ? endDate.toISOString().split("T")[0] : null 
+          })
+        : Promise.resolve(null),
+        enabled: !!userId && !!startDate && !!endDate
   });
 
   // Fetch user data
@@ -31,15 +62,11 @@ const LocationHistory = () => {
     queryFn: getUserWithLocationHistory,
   });
 
-  // Extract path coordinates for Polyline
-  const pathCoordinates = data?.location?.map((loc) => [
-    loc.location.coordinates[1], // Latitude
-    loc.location.coordinates[0], // Longitude
-  ]) || [];
+  const pathCoordinates =
+    data?.location?.map((loc) => [loc.location.coordinates[1], loc.location.coordinates[0]]) || [];
 
   const center = pathCoordinates.length > 0 ? pathCoordinates[0] : [31.5, 74.3];
 
-  // Table Columns
   const columns = [
     { key: "fullName", title: "Name", accessorKey: "fullName", header: "Name" },
     { key: "status", title: "Status", accessorKey: "status", header: "Status" },
@@ -50,30 +77,19 @@ const LocationHistory = () => {
 
   const toggle = () => setModal(!modal);
 
-  // Filtered users based on search
-  const filteredUsers = usersData?.users?.filter(user =>
-    user.user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredUsers =
+    usersData?.users?.filter((user) => user.user.fullName.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
-  // Handle View Click (Update Query Params)
   const handleViewClick = (userId) => {
-    setSearchParams({ userId });  // Update query params
-    queryClient.invalidateQueries(["location", userId]);  // Invalidate query
-    setModal(true);  // Open modal
+    setSearchParams({ 
+      userId, 
+      startDate: initialValues.startDate.toISOString().split("T")[0], 
+      endDate: initialValues.endDate.toISOString().split("T")[0] 
+    });
+    queryClient.invalidateQueries(["location", userId, initialValues.startDate, initialValues.endDate]);
+   
+    setModal(true);
   };
-
-  // Render row function
-  const renderRow = (row) => (
-    <tr key={row.id}>
-      <td>{row.user?.fullName || "N/A"}</td>
-      <td>{row.user?.status === 1 ? "Active" : "Inactive"}</td>
-      <td>{row.user?.phoneNumber || "N/A"}</td>
-      <td>{row.id || "N/A"}</td>
-      <td className="text-primary cursor-pointer" onClick={() => handleViewClick(row.user?.id)}>
-        View
-      </td>
-    </tr>
-  );
 
   return (
     <div>
@@ -100,7 +116,17 @@ const LocationHistory = () => {
             loading={usersLoading}
             columns={columns}
             data={filteredUsers.slice((pageNo - 1) * pageSize, pageNo * pageSize)}
-            renderRow={renderRow}
+            renderRow={(row) => (
+              <tr key={row.id}>
+                <td>{row.user?.fullName || "N/A"}</td>
+                <td>{row.user?.status === 1 ? "Active" : "Inactive"}</td>
+                <td>{row.user?.phoneNumber || "N/A"}</td>
+                <td>{row.id || "N/A"}</td>
+                <td className="text-primary cursor-pointer" onClick={() => handleViewClick(row.user?.id)}>
+                  View
+                </td>
+              </tr>
+            )}
             pageSize={pageSize}
             pageNo={pageNo}
             totalCount={filteredUsers.length}
@@ -114,19 +140,64 @@ const LocationHistory = () => {
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Location History</ModalHeader>
         <ModalBody>
+          {/* Date Picker Form */}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              setSearchParams({ userId, startDate: values.startDate, endDate: values.endDate });
+              queryClient.invalidateQueries(["location", userId, values.startDate, values.endDate]);
+            }}
+          >
+            {({ setFieldValue }) => (
+              <Form className="mb-3">
+                <div className="d-flex gap-3 ">
+                  <div>
+                    <label>Start Date:</label>
+                    <Field name="startDate">
+                      {({ field }) => (
+                        <DatePicker
+                          {...field}
+                          selected={field.value}
+                          onChange={(date) => setFieldValue("startDate", date)}
+                          className="form-control"
+                        />
+                      )}
+                    </Field>
+                    <ErrorMessage name="startDate" component="div" className="text-danger" />
+                  </div>
+                  <div>
+                    <label>End Date:</label>
+                    <Field name="endDate">
+                      {({ field }) => (
+                        <DatePicker
+                          {...field}
+                          selected={field.value}
+                          onChange={(date) => setFieldValue("endDate", date)}
+                          className="form-control"
+                        />
+                      )}
+                    </Field>
+                    <ErrorMessage name="endDate" component="div" className="text-danger" />
+                  </div>
+                  <Button type="submit" color="primary" className="mt-4">Filter</Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+
+          
           {isLoading ? (
             <p>Loading map...</p>
           ) : isError || !data?.location?.length ? (
-            <p>Error loading map data.</p>
+            <p>No location data available for the selected date range.</p>
           ) : (
             <MapContainer center={center} zoom={18} style={{ height: "500px", width: "100%" }}>
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
               <Polyline positions={pathCoordinates} color="red" />
             </MapContainer>
           )}
+          
         </ModalBody>
       </Modal>
     </div>

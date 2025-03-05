@@ -51,6 +51,13 @@
   background-color: #9BB1F3;
 }
 
+.react-datepicker-popper {
+  z-index: 1050 !important; /* Higher than Leaflet Map's default */
+}
+
+.leaflet-container {
+  z-index: 0 !important; /* Lower than date picker */
+}
 
 @media screen and (max-width: 768px) {
   .expand--sidebar {
