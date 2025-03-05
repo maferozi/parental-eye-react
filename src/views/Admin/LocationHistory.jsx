@@ -18,6 +18,7 @@ const LocationHistory = () => {
   const [pageNo, setPageNo] = useState(1);
   const [pageSize] = useState(5);
   const [searchParams, setSearchParams] = useSearchParams();
+  const today = new Date();
 
   const userId = searchParams.get("userId");
   const startDate = searchParams.get("startDate") ? new Date(searchParams.get("startDate")) : today;
@@ -26,7 +27,6 @@ const LocationHistory = () => {
   const queryClient = useQueryClient();
 
   // Get today's date
-  const today = new Date();
 
   // Formik Initial Values
   const initialValues = {
