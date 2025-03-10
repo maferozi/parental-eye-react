@@ -62,6 +62,8 @@ const LocationHistory = () => {
     queryFn: getUserWithLocationHistory,
   });
 
+  console.log(usersData);
+
   const pathCoordinates =
     data?.location?.map((loc) => [loc.location.coordinates[1], loc.location.coordinates[0]]) || [];
 
@@ -71,7 +73,7 @@ const LocationHistory = () => {
     { key: "fullName", title: "Name", accessorKey: "fullName", header: "Name" },
     { key: "status", title: "Status", accessorKey: "status", header: "Status" },
     { key: "phoneNumber", title: "Phone No", accessorKey: "phoneNumber", header: "Phone No" },
-    { key: "deviceId", title: "Device ID", accessorKey: "deviceId", header: "Device ID" },
+    { key: "deviceName", title: "Device Name", accessorKey: "deviceName", header: "Device Name" },
     { key: "action", title: "Action", accessorKey: "action", header: "Actions" },
   ];
 
@@ -119,9 +121,9 @@ const LocationHistory = () => {
             renderRow={(row) => (
               <tr key={row.id}>
                 <td>{row.user?.fullName || "N/A"}</td>
-                <td>{row.user?.status === 1 ? "Active" : "Inactive"}</td>
+                <td className={`${row?.status === 1? 'text-success': 'text-warning'}`}>{row?.status === 1 ? "Active" : "Inactive"}</td>
                 <td>{row.user?.phoneNumber || "N/A"}</td>
-                <td>{row.id || "N/A"}</td>
+                <td>{row.deviceName || "N/A"}</td>
                 <td className="text-primary cursor-pointer" onClick={() => handleViewClick(row.user?.id)}>
                   View
                 </td>
