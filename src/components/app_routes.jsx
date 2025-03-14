@@ -21,6 +21,7 @@ const AdminDashboard = Loadable(lazy(() => import("../views/Admin/Dashboard")));
 const AdminDevice = Loadable(lazy(() => import("../views/Admin/DeviceManagement")));
 const AdminUserManagemnet = Loadable(lazy(() => import("../views/Admin/UserManagement")));
 const AdminGeofence = Loadable(lazy(() => import("../views/Admin/Geofence")));
+const AdminHistory = Loadable(lazy(() => import("../views/Admin/LocationHistory")));
 const AdminNotification = Loadable(lazy(() => import("../views/Admin/Notification")));
 
 const SuperAdminDashboard = Loadable(lazy(() => import("../views/SuperAdmin/Dashboard")));
@@ -49,6 +50,7 @@ const app_routes = [
             { path: '/admin/user-management', exact: true, element:  <AdminUserManagemnet />  },
             { path: '/admin/device', exact: true, element:  <AdminDevice />  },
             { path: '/admin/geofence', exact: true, element:  <AdminGeofence />  },
+            { path: '/admin/history', exact: true, element:  <AdminHistory />  },
             { path: '/admin/notification', exact: true, element:  <AdminNotification />  },
             { path: '*', element: <Navigate to="/admin/" /> },
         ],

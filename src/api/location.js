@@ -7,3 +7,8 @@ export const getLocationById = (body) => {
         `${BASE_URL}/location/`,body
     ).then(res => res.data);
 }
+export const getUserWithLocationHistory = () => {
+    return axiosClient.get(
+        `${BASE_URL}/location/`
+    ).then(res => res.data);
+}

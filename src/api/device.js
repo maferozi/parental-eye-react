@@ -7,6 +7,11 @@ export const getAllDevices = (params) => {
         `${BASE_URL}/device/`,{params}
     ).then(res => res.data);
 }
+export const getActiveDevices = () => {
+    return axiosClient.get(
+        `${BASE_URL}/device/active-devices/`)
+        .then(res => res.data);
+}
 
 export const addDevice = (body) => {
     console.log(body);

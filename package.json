@@ -17,12 +17,15 @@
     "bootstrap": "^5.3.3",
     "formik": "^2.4.6",
     "framer-motion": "^11.2.6",
+    "leaflet": "^1.9.4",
+    "mqtt": "^5.10.4",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.6",
     "react-countup": "^6.5.3",
     "react-data-table-component": "^7.6.2",
-    "react-datepicker": "^7.5.0",
+    "react-datepicker": "^7.6.0",
     "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
     "react-loading-skeleton": "^3.5.0",
     "react-qr-code": "^2.0.15",
     "react-query": "^3.39.3",
@@ -33,9 +36,10 @@
     "react-toastify": "^10.0.6",
     "reactstrap": "^9.2.3",
     "simplebar-react": "^3.3.0",
+    "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.15.0",
     "to-words": "^4.2.0",
-    "yup": "^1.4.0"
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",

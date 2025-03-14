@@ -10,7 +10,7 @@ const Header = ({
 }) => {
   const { logout, user, isLoading } = useContext(AuthContext);
   
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const sidebarToggler = () => {
     setShowSideBar(true);
     const mainWrapper = document.querySelector(".sidebar--container");
