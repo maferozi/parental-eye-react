@@ -37,6 +37,25 @@ const Support = Loadable(lazy(() => import("../views/child-tracking-ui/Support")
 const Feature = Loadable(lazy(() => import("../views/child-tracking-ui/Features")));
 
 const app_routes = [
+    // Child Tracking UI Routes
+    {
+      path: "/home",
+      exact: true,
+      element: <Homei />,
+    },
+    {
+      path: "/contact",
+      element: <Contact />,
+    },
+    {
+      path: "/feature",
+      element: <Feature />,
+    },
+    {
+      path: "/support",
+      element: <Support />,
+    },
+
   // Auth Routes
   {
     path: "/auth",
@@ -49,27 +68,10 @@ const app_routes = [
       { path: "/auth/login", exact: true, element: <Login /> },
       { path: "/auth/register", exact: true, element: <Register /> },
       { path: "/auth/forget/:token?", exact: true, element: <Forget /> },
+      { path: "*", element: <Navigate to="/home" /> },
     ],
   },
 
-  // Child Tracking UI Routes
-  {
-    path: "/ho",
-    exact: true,
-    element: <Homei />,
-  },
-  {
-    path: "/co",
-    element: <Contact />,
-  },
-  {
-    path: "/fe",
-    element: <Feature />,
-  },
-  {
-    path: "/su",
-    element: <Support />,
-  },
 
   // Admin Routes
   {
@@ -111,25 +113,9 @@ const app_routes = [
     ],
   },
 
-  // Main Layout Routes
-  {
-    path: "/",
-    element: (
-      <RouteGuard>
-        <Layout />
-      </RouteGuard>
-    ),
-    children: [
-      { path: "", exact: true, element: <Navigate to="/home" /> },
-      { path: "/home", exact: true, element: <Home /> },
-      { path: "/company", exact: true, element: <Company /> },
-      { path: "/reports", exact: true, element: <Reports /> },
-      { path: "*", element: <Navigate to="/home" /> },
-    ],
-  },
 
   // Catch-All Redirect to Login
-  { path: "*", element: <Navigate to="/auth/login" /> },
+  { path: "*", element: <Navigate to="/home" /> },
 ];
 
 export default app_routes;
