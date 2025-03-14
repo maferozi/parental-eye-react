@@ -15,7 +15,6 @@ function AuthProvider({ children }) {
       setIsLoggedIn(true);
       setJwt(storedJwt);
     }
-    setIsLoading(false);
   }, []);
 
   function login(token) {

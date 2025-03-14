@@ -49,6 +49,12 @@ export const getUserById = (id) => {
     ).then(res => res.data);
 }
 
+export const getAdminParent = () => {
+    return axiosClient.get(
+        `${BASE_URL}/auth/get-admin-parent`
+    ).then(res => res.data);
+}
+
 export const changePassword = (body) => {
     return axiosClient.put(
         `${BASE_URL}/auth/me/password`,

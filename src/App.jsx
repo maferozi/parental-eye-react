@@ -1,4 +1,4 @@
-import './App.css'
+
 import { useNavigate, useRoutes } from 'react-router';
 import app_routes from './components/app_routes';
 import { AuthContext } from './context/AuthContext';
@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setAuthToken } from './api/axios';
 import { me } from './api/auth';
 import "react-datepicker/dist/react-datepicker.css";
+import { MqttProvider } from './context/MqttContext';
 
 
 function App() {
@@ -47,11 +48,11 @@ function App() {
     <>
       <AnimatePresence>
         <AnimatedRoute>
-          
-            <QueryClientProvider client={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <MqttProvider>
               {routing}
-            </QueryClientProvider>
-          
+            </MqttProvider>
+          </QueryClientProvider>
         </AnimatedRoute>
       </AnimatePresence>
     </>
