@@ -1,38 +1,100 @@
-import React from "react";
-import { MapContainer, TileLayer, Polyline } from "react-leaflet";
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useQuery } from "@tanstack/react-query";
-import { getLocationById } from "../../api/location";
+import { useMqttContext } from "../../context/MqttContext";
+import L from "leaflet";
+
+// Active device icon
+const activeDeviceIcon = new L.Icon({
+  iconUrl: "/location/active-device.png",
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
+});
+
+// Inactivity timeout (milliseconds)
+const INACTIVITY_THRESHOLD = 10000; // 10 seconds
 
 const GeofenceMap = () => {
-  // Fetch location data
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["location"],
-    queryFn: () => getLocationById({ userId: 51 }),
-  });
+  const { deviceLocations } = useMqttContext();
+  const [filteredLocations, setFilteredLocations] = useState({}); // Maintain active devices
+  const [lastSeen, setLastSeen] = useState({}); // Track last seen timestamps
 
-  if (isLoading) return <p>Loading map...</p>;
-  if (isError || !data?.location?.length) return <p>Error loading map data.</p>;
+  // Update last seen timestamps when new location data arrives
+  useEffect(() => {
+    const now = Date.now();
 
-  // Extract path coordinates for Polyline
-  const pathCoordinates = data.location.map((loc) => [
-    loc.location.coordinates[1], // Latitude
-    loc.location.coordinates[0], // Longitude
-  ]);
+    setLastSeen((prev) => {
+      const updated = { ...prev };
+      Object.keys(deviceLocations).forEach((deviceName) => {
+        updated[deviceName] = now; // Mark device as recently seen
+      });
+      return updated;
+    });
 
-  // Center the map on the first coordinate
-  const center = pathCoordinates.length > 0 ? pathCoordinates[0] : [31.5, 74.3];
+    setFilteredLocations(deviceLocations); // Sync active locations
+  }, [deviceLocations]);
+
+  // Remove inactive devices after the threshold
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+
+      setFilteredLocations((prevLocations) => {
+        const updatedLocations = { ...prevLocations };
+
+        Object.keys(lastSeen).forEach((deviceName) => {
+          if (now - lastSeen[deviceName] > INACTIVITY_THRESHOLD) {
+            delete updatedLocations[deviceName]; // Remove inactive devices
+          }
+        });
+
+        return updatedLocations;
+      });
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [lastSeen]);
+
+  // Find first valid location to center the map
+  const validDevices = Object.values(filteredLocations).filter(
+    (loc) => loc?.latitude !== undefined && loc?.longitude !== undefined
+  );
+
+  const center = validDevices.length
+    ? [validDevices[0].latitude, validDevices[0].longitude]
+    : [31.5, 74.3]; // Default fallback location
 
   return (
     <MapContainer center={center} zoom={18} style={{ height: "500px", width: "100%" }}>
-      {/* OpenStreetMap Tile Layer (Free) */}
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      /> 
+      />
 
-      {/* Draw Polyline for the Path */}
-      <Polyline positions={pathCoordinates} color="red" />
+      {/* Render active device markers */}
+      {Object.entries(filteredLocations).map(([deviceName, location]) => {
+        if (!location || location.latitude === undefined || location.longitude === undefined) {
+          return null;
+        }
+
+        return (
+          <Marker
+            key={deviceName}
+            position={[location.latitude, location.longitude]}
+            icon={activeDeviceIcon}
+          >
+            <Popup>
+              <strong>{deviceName}</strong>
+              <br />
+              Status: ✅ Active
+              <br />
+              Lat: {location.latitude}
+              <br />
+              Lng: {location.longitude}
+            </Popup>
+          </Marker>
+        );
+      })}
     </MapContainer>
   );
 };

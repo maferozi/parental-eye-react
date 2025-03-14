@@ -11,6 +11,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { socket } from "../../utills/socket";
+
 
 const LocationHistory = () => {
   const [modal, setModal] = useState(false);
@@ -34,6 +36,7 @@ const LocationHistory = () => {
     endDate: today,
   };
 
+  
   // Yup Validation Schema
   const validationSchema = Yup.object({
     startDate: Yup.date().required("Start date is required"),
@@ -47,28 +50,30 @@ const LocationHistory = () => {
     queryKey: ["location", userId, startDate, endDate],
     queryFn: () =>
       userId
-        ? getLocationById({ 
+    ? getLocationById({ 
             userId, 
             startDate: startDate ? startDate.toISOString().split("T")[0] : null, 
             endDate: endDate ? endDate.toISOString().split("T")[0] : null 
           })
-        : Promise.resolve(null),
+          : Promise.resolve(null),
         enabled: !!userId && !!startDate && !!endDate
   });
-
+  
   // Fetch user data
-  const { data: usersData, isLoading: usersLoading } = useQuery({
+  const { data: usersData, isLoading: usersLoading, refetch: usersLocation } = useQuery({
     queryKey: ["user with location"],
     queryFn: getUserWithLocationHistory,
   });
 
-  console.log(usersData);
-
+  socket.on("deviceStatusUpdate", (data) => {
+    usersLocation();
+  });
+  
   const pathCoordinates =
-    data?.location?.map((loc) => [loc.location.coordinates[1], loc.location.coordinates[0]]) || [];
-
+  data?.location?.map((loc) => [loc.location.coordinates[1], loc.location.coordinates[0]]) || [];
+  
   const center = pathCoordinates.length > 0 ? pathCoordinates[0] : [31.5, 74.3];
-
+  
   const columns = [
     { key: "fullName", title: "Name", accessorKey: "fullName", header: "Name" },
     { key: "status", title: "Status", accessorKey: "status", header: "Status" },
@@ -80,7 +85,7 @@ const LocationHistory = () => {
   const toggle = () => setModal(!modal);
 
   const filteredUsers =
-    usersData?.users?.filter((user) => user.user.fullName.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+    usersData?.users?.filter((user) => user.user?.fullName.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
   const handleViewClick = (userId) => {
     setSearchParams({ 
