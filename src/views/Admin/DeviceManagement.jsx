@@ -173,7 +173,7 @@ const AdminDeviceManagement = () => {
                 <option value="">-- Select Child --</option>
                 {!loadingChildren && children.data.map((child) => (
                   <option key={child.id} value={child.id}>
-                    {child.id + " | " + child.fullName} 
+                    {child.id + " | " + child.firstName + " " + child.lastName} 
                   </option>
                 ))}
               </Field>

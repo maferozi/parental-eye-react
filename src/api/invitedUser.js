@@ -7,6 +7,16 @@ export const getAllInvitedUser = (params) => {
         `${BASE_URL}/invite-user/`,{params}
     ).then(res => res.data);
 }
+export const getAllParents = (params) => {
+    return axiosClient.get(
+        `${BASE_URL}/invite-user/parent`,{params}
+    ).then(res => res.data);
+}
+export const getAllDrivers = (params) => {
+    return axiosClient.get(
+        `${BASE_URL}/invite-user/driver`,{params}
+    ).then(res => res.data);
+}
 
 export const addInvitedUser = (body) => {
     console.log(body);

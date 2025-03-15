@@ -10,11 +10,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Skeleton from "react-loading-skeleton";
 
-const notifications = [
-  { id: 1, message: "You have a new message" },
-  { id: 2, message: "Your profile was viewed" },
-  { id: 3, message: "Update your password" },
-];
 
 const UserManagement = () => {
   const [modal, setModal] = useState(false);
@@ -29,7 +24,7 @@ const UserManagement = () => {
   // Fetch paired users
   const { data: childData, isLoading: childLoading, refetch:refetchChild } = useQuery({
     queryKey: ["childData", pageNoChild, pageSizeChild],
-    queryFn: () => getAllInvitedUser({ pageNo: pageNoChild, limit: pageSizeChild, type:1, search: childSearchQuery }),
+    queryFn: () => getAllInvitedUser({ pageNo: pageNoChild, limit: pageSizeChild, role:4, search: childSearchQuery }),
   });
 
   const pageNoDriver = Number(searchParams.get("pageNoDriver")) || 1;
@@ -37,8 +32,15 @@ const UserManagement = () => {
 
   const { data: driverData, isLoading: driverLoading, refetch:refetchDriver } = useQuery({
     queryKey: ["driverData", pageNoDriver, pageSizeDriver],
-    queryFn: () => getAllInvitedUser({ pageNo: pageNoDriver, limit: pageSizeDriver, type:2, search: driverSearchQuery }),
+    queryFn: () => getAllInvitedUser({ pageNo: pageNoDriver, limit: pageSizeDriver, role:5, search: driverSearchQuery }),
   });
+
+
+  const { data: parentData, isLoading: parentLoading, refetch:refetchParent } = useQuery({
+    queryKey: ["parentData", pageNoDriver, pageSizeDriver],
+    queryFn: () => getAllInvitedUser({ pageNo: pageNoDriver, limit: pageSizeDriver, role:3, search: driverSearchQuery }),
+  });
+
   
 
   const handleChildPageChange = (newPageNo) => {
@@ -53,7 +55,15 @@ const UserManagement = () => {
 
   
 
-  const column = [
+  const columnChild = [
+    { key: "fullName", title: "Name", accessorKey: "fullName", header: "User Name" },
+    { key: "type", title: "Type", accessorKey: "type", header: "User Type" },
+    { key: "status", title: "Status", accessorKey: "status", header: "Pairing Status" },
+    { key: "parentId", title: "Gardian Id", accessorKey: "parentId", header: "Gardian Id" },
+    { key: "driverId", title: "Driver Id", accessorKey: "driverId", header: "Driver Id" },
+    { key: "action", title: "Action", accessorKey: "action", header: "Actions" },
+  ];
+  const columnDriver = [
     { key: "fullName", title: "Name", accessorKey: "fullName", header: "User Name" },
     { key: "type", title: "Type", accessorKey: "type", header: "User Type" },
     { key: "status", title: "Status", accessorKey: "status", header: "Pairing Status" },
@@ -62,19 +72,21 @@ const UserManagement = () => {
 
   const renderRow = (item) => (
     <tr key={item.id}>
-      <td>{item.fullName}</td>
-      <td>{item.type === 2 ? "Driver" : "Child"}</td>
-      <td className={`${item.status == 2 ? 'text-success': 'text-warning'}`}>{item.status === 2 ? "Paired" : "Unpaired"}</td>
+      <td>{item.firstName} {item.lastName}</td>
+      <td>{item.role === 4 ? "Child" : "Driver"}</td>
+      <td className={`${item.status == 1 ? 'text-success': 'text-warning'}`}>{item.status === 1 ? "Paired" : "Unpaired"}</td>
+      {item.role === 4 && <td>{item.parentId || "Free"}</td>}
+      {item.role === 4 && <td>{item.driverId || "Free"}</td>}
       <td>
         <Dropdown>
           <Dropdown.Toggle variant="light">
             <i className="ti ti-dots"></i>
           </Dropdown.Toggle>
-          <Dropdown.Menu>
+          <Dropdown.Menu >
             <Dropdown.Item className="text-danger" onClick={async() => {
               await deleteInvitedUser(item.id);
-              if(item.type === 1) refetchChild();
-              if(item.type === 2) refetchDriver();
+              if(item.role === 4) refetchChild();
+              if(item.role === 5) refetchDriver();
             }}>
               Delete
             </Dropdown.Item>
@@ -89,11 +101,11 @@ const UserManagement = () => {
 
 
 
-  const handdleUnpair = async(id, type)=>{
+  const handdleUnpair = async(id, role)=>{
     try {
       await toggleStatusById(id);
-      if(type === 1) refetchChild();
-      if(type === 2) refetchDriver();
+      if(role === 1) refetchChild();
+      if(role === 2) refetchDriver();
     }
     catch (error) {
       console.error("Error toggling user status:", error);
@@ -102,10 +114,14 @@ const UserManagement = () => {
 
   const [formValues, setFormValues] = useState({
     type: "",
-    fullName: "",
-    birthDate: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "Jon*1234",
     phoneNumber: "",
-    id: null,
+    parentId: "",
+    driverId: "",
+    id: "",
   });
 
   const toggle = () => setModal(!modal);
@@ -113,53 +129,69 @@ const UserManagement = () => {
   const handdleUpdateUser = async (id) => {
     try {
       const res = await getInvitedUserById(id);
-
+  
       setFormValues({
-        type: String(res.data.type), // Ensure type is a string for Formik's validation
-        fullName: res.data.fullName,
-        birthDate: new Date(res.data.birthDate).toISOString().split("T")[0],
+        type: String(res.data.type), 
+        firstName: res.data.firstName, // Correct field
+        lastName: res.data.lastName,   // Correct field
+        email: res.data.email,
         phoneNumber: res.data.phoneNumber,
         id: res.data.id,
       });
-
+  
       toggle();
     } catch (error) {
       console.error("Error fetching user data for update:", error);
     }
   };
+  
   const initialValues = {
     type: "",
-    fullName: "",
-    birthDate: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "Jon*1234",
     phoneNumber: "",
+    parentId: "",
+    driverId: "",
     id: null,
   };
 
   const validationSchema = Yup.object({
-    type: Yup.string().required("Type is required").oneOf(["1", "2"], "Invalid type"),
-    fullName: Yup.string().required("Full Name is required").min(3, "Name must be at least 3 characters"),
-    birthDate: Yup.date().required("Birth Date is required").max(new Date(), "Birth date cannot be in the future"),
+    type: Yup.string().required("Type is required").oneOf(["3", "4", "5"], "Invalid type"),
+    firstName: Yup.string().required("First Name is required").min(2, "First Name must be at least 2 characters"),
+    lastName: Yup.string().required("Last Name is required").min(2, "Last Name must be at least 2 characters"),
+    email: Yup.string().email("Invalid email format").required("Email is required"),
+    password: Yup.string().required("Password is required").min(6, "Password must be at least 6 characters"),
     phoneNumber: Yup.string()
       .required("Phone Number is required")
       .matches(/^\d{10,15}$/, "Phone Number must be between 10 and 15 digits"),
   });
+  
 
   const handleSubmit =async (values, { resetForm }) => {
   
-    await addInvitedUser(values);
     console.log(values);
+    await addInvitedUser(values);
     toggle();
     resetForm();
     setFormValues({
       type: "",
-      fullName: "",
-      birthDate: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "Jon*1234",
       phoneNumber: "",
+      parentId: "",
+      driverId: "",
       id: null,
     })
-    if(values.type === "1") refetchChild();
-    if(values.type === "2") refetchDriver();
+    if(values.type === "4") refetchChild();
+    if(values.type === "5") refetchDriver();
   };
+
+
+
 
 
   return (
@@ -168,7 +200,7 @@ const UserManagement = () => {
         <button onClick={toggle} className="btn btn-primary">Add User</button>
       </div>
       <div className="row justify-content-around mt-5">
-         <div className="col-12 col-sm-12 col-md-12 col-lg-8 p-4 border rounded-5 shadow-md">
+         <div className="col-12  p-4 border rounded-5 shadow-md">
           <div className="d-flex justify-content-between align-items-center">
           <h4>Childrens</h4>
           <input className="form-control rounded-pill" style={{width:"10rem"}} type="text" placeholder="Search" onChange={async(e)=>{
@@ -180,7 +212,7 @@ const UserManagement = () => {
          </div>
        {childData && <DataTable
             loading={childLoading}
-            columns={column}
+            columns={columnChild}
             data={childData.data}
             renderRow={renderRow}
             pageSize={childData.limit}
@@ -196,9 +228,7 @@ const UserManagement = () => {
           </div>}
         </div>
 
-        <div className="col-12 col-sm-12 col-md-12 col-lg-4">
-          <Notification notifications={notifications} />
-        </div>
+
       </div>
 
 
@@ -215,7 +245,7 @@ const UserManagement = () => {
         {driverData && (
           <DataTable
             loading={driverLoading}
-            columns={column}
+            columns={columnDriver}
             data={driverData.data}
             renderRow={renderRow}
             pageSize={driverData.limit}
@@ -233,57 +263,113 @@ const UserManagement = () => {
       </div>
 
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Add New User</ModalHeader>
-        <ModalBody>
-          <Formik
-            initialValues={formValues}
-            validationSchema={validationSchema}
-            enableReinitialize
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <div className="mb-3">
-                  <label htmlFor="type">User Type</label>
-                  <Field as="select" name="type" className="form-control">
-                    <option value="">Select Type</option>
-                    <option value="1">Child</option>
-                    <option value="2">Driver</option>
-                  </Field>
-                  <ErrorMessage name="type" component="div" className="text-danger" />
-                </div>
+  <ModalHeader toggle={toggle}>{formValues.id ? "Update User" : "Add New User"}</ModalHeader>
+  <ModalBody>
+    <Formik
+      key={formValues.id} 
+      initialValues={formValues}
+      validationSchema={validationSchema}
+      enableReinitialize
+      onSubmit={handleSubmit}
+    >
+      {({ isSubmitting, values }) => (
+        <Form>
+          <div className="mb-3">
+            <label htmlFor="type">User Type</label>
+            <Field as="select" name="type" className="form-control">
+              <option value="">Select Type</option>
+              <option value="4">Child</option>
+              <option value="3">Guardian</option>
+              <option value="5">Driver</option>
+            </Field>
+            <ErrorMessage name="type" component="div" className="text-danger" />
+          </div>
 
-                <div className="mb-3">
-                  <label htmlFor="fullName">Full Name</label>
-                  <Field type="text" name="fullName" className="form-control" placeholder="Enter full name" />
-                  <ErrorMessage name="fullName" component="div" className="text-danger" />
-                </div>
 
-                <div className="mb-3">
-                  <label htmlFor="birthDate">Birth Date</label>
-                  <Field type="date" name="birthDate" className="form-control" />
-                  <ErrorMessage name="birthDate" component="div" className="text-danger" />
-                </div>
+          {values.type === "4" && (
+            <>
+              {/* Parent Selection */}
+              <div className="d-flex justify-content-between align-items-center gap-3">
+              <div className="mb-3 w-100">
+                <label>Select Parent:</label>
+                <Field as="select" name="parentId" className="form-control">
+                  <option value="">-- Select Parent --</option>
+                  {!parentLoading &&
+                    parentData?.data.map((parent) => (
+                      <option key={parent.id} value={parent.id}>
+                        {parent.id + " | " + parent.firstName + " " + parent.lastName}
+                      </option>
+                    ))}
+                </Field>
+                <ErrorMessage name="parentId" component="div" className="text-danger" />
+              </div>
 
-                <div className="mb-3">
-                  <label htmlFor="phoneNumber">Phone Number</label>
-                  <Field type="text" name="phoneNumber" className="form-control" placeholder="Enter phone number" />
-                  <ErrorMessage name="phoneNumber" component="div" className="text-danger" />
-                </div>
+              {/* Driver Selection */}
+              <div className="mb-3 w-100">
+                <label>Select Driver:</label>
+                <Field as="select" name="driverId" className="form-control">
+                  <option value="">-- Select Driver --</option>
+                  {!driverLoading &&
+                    driverData?.data.map((driver) => (
+                      <option key={driver.id} value={driver.id}>
+                        {driver.id + " | " + driver.firstName + " " + driver.lastName}
+                      </option>
+                    ))}
+                </Field>
+                <ErrorMessage name="driverId" component="div" className="text-danger" />
+              </div>
+              </div>
+            </>
+          )}
 
-                <ModalFooter>
-                  <Button color="primary" type="submit" disabled={isSubmitting}>
-                    {formValues.id ? "Update User" : "Add User"}
-                  </Button>
-                  <Button color="secondary" onClick={toggle}>
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </Form>
-            )}
-          </Formik>
-        </ModalBody>
-      </Modal>
+
+        <div className="d-flex justify-content-between align-items-center gap-3">
+          <div className="mb-3 w-100">
+            <label htmlFor="firstName">First Name</label>
+            <Field type="text" name="firstName" className="form-control" placeholder="Enter first name" />
+            <ErrorMessage name="firstName" component="div" className="text-danger" />
+          </div>
+
+          <div className="mb-3 w-100">
+            <label htmlFor="lastName">Last Name</label>
+            <Field type="text" name="lastName" className="form-control" placeholder="Enter last name" />
+            <ErrorMessage name="lastName" component="div" className="text-danger" />
+          </div>
+        </div>
+
+          <div className="mb-3">
+            <label htmlFor="email">Email</label>
+            <Field type="email" name="email" className="form-control" placeholder="Enter email" />
+            <ErrorMessage name="email" component="div" className="text-danger" />
+          </div>
+          <div className="d-flex justify-content-between align-items-center gap-3">
+          <div className="mb-3 w-100">
+            <label htmlFor="password">Password</label>
+            <Field type="text" name="password" className="form-control" placeholder="Enter password" />
+            <ErrorMessage name="password" component="div" className="text-danger" />
+          </div>
+
+          <div className="mb-3 w-100">
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <Field type="text" name="phoneNumber" className="form-control" placeholder="Enter phone number" />
+            <ErrorMessage name="phoneNumber" component="div" className="text-danger" />
+          </div>
+          </div>
+
+          <ModalFooter>
+            <Button color="primary" type="submit" disabled={isSubmitting}>
+              {formValues.id ? "Update User" : "Add User"}
+            </Button>
+            <Button color="secondary" onClick={toggle}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Form>
+      )}
+    </Formik>
+  </ModalBody>
+</Modal>
+
     </div>
   );
 };

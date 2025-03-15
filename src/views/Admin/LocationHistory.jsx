@@ -41,8 +41,7 @@ const LocationHistory = () => {
   const validationSchema = Yup.object({
     startDate: Yup.date().required("Start date is required"),
     endDate: Yup.date()
-      .required("End date is required")
-      .min(Yup.ref("startDate"), "End date must be after start date"),
+      .required("End date is required"),
   });
 
   // Fetch location data based on userId and date range
@@ -75,7 +74,7 @@ const LocationHistory = () => {
   const center = pathCoordinates.length > 0 ? pathCoordinates[0] : [31.5, 74.3];
   
   const columns = [
-    { key: "fullName", title: "Name", accessorKey: "fullName", header: "Name" },
+    { key: "firstName", title: "Name", accessorKey: "firstName", header: "Name" },
     { key: "status", title: "Status", accessorKey: "status", header: "Status" },
     { key: "phoneNumber", title: "Phone No", accessorKey: "phoneNumber", header: "Phone No" },
     { key: "deviceName", title: "Device Name", accessorKey: "deviceName", header: "Device Name" },
@@ -84,8 +83,9 @@ const LocationHistory = () => {
 
   const toggle = () => setModal(!modal);
 
-  const filteredUsers =
-    usersData?.users?.filter((user) => user.user?.fullName.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+  const filteredUsers = usersData?.devices?.filter((device) => 
+    device.user?.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   const handleViewClick = (userId) => {
     setSearchParams({ 
@@ -125,7 +125,7 @@ const LocationHistory = () => {
             data={filteredUsers.slice((pageNo - 1) * pageSize, pageNo * pageSize)}
             renderRow={(row) => (
               <tr key={row.id}>
-                <td>{row.user?.fullName || "N/A"}</td>
+                <td>{row.user?.firstName || "N/A"}</td>
                 <td className={`${row?.status === 1? 'text-success': 'text-warning'}`}>{row?.status === 1 ? "Active" : "Inactive"}</td>
                 <td>{row.user?.phoneNumber || "N/A"}</td>
                 <td>{row.deviceName || "N/A"}</td>

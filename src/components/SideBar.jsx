@@ -62,6 +62,56 @@ function Sidebar({
         navigate('/auth/login');
       }
 
+  // Define role-based navigation paths
+  const roleRoutes = {
+    1: "/super-admin", // Super Admin
+    2: "/admin",       // Admin
+    3: "/gardian",     // Guardian
+    4: "/child",       // Child
+    5: "/driver",      // Driver
+  };
+
+  const baseRoute = roleRoutes[user?.role] || "/";
+
+  // Define menu items per role
+  const menuItems = {
+    1: [ // Super Admin
+      { path: "/dashboard", icon: "ti-home", label: "Dashboard" },
+      { path: "/report", icon: "ti-report", label: "Reports" },
+      { path: "/user-management", icon: "ti-users", label: "User Management" },
+      { path: "/device", icon: "ti-devices", label: "Device Management" },
+      { path: "/notification", icon: "ti-bell", label: "Notification" },
+    ],
+    2: [ // Admin
+      { path: "/dashboard", icon: "ti-home", label: "Dashboard" },
+      { path: "/report", icon: "ti-report", label: "Reports" },
+      { path: "/user-management", icon: "ti-users", label: "User Management" },
+      { path: "/device", icon: "ti-devices", label: "Device Management" },
+      { path: "/geofence", icon: "ti-map", label: "GeoFencing" },
+      { path: "/history", icon: "ti-history", label: "Location History" },
+      { path: "/notification", icon: "ti-bell", label: "Notification" },
+    ],
+    3: [ // Guardian
+      { path: "/dashboard", icon: "ti-home", label: "Dashboard" },
+      { path: "/report", icon: "ti-report", label: "Reports" },
+      { path: "/history", icon: "ti-history", label: "Location History" },
+      { path: "/notification", icon: "ti-bell", label: "Notification" },
+    ],
+    4: [ // Child
+      { path: "/dashboard", icon: "ti-home", label: "Dashboard" },
+      { path: "/report", icon: "ti-report", label: "Reports" },
+      { path: "/history", icon: "ti-history", label: "Location History" },
+      { path: "/notification", icon: "ti-bell", label: "Notification" },
+    ],
+    5: [ // Driver
+      { path: "/dashboard", icon: "ti-home", label: "Dashboard" },
+      { path: "/report", icon: "ti-report", label: "Reports" },
+      { path: "/history", icon: "ti-history", label: "Location History" },
+      { path: "/notification", icon: "ti-bell", label: "Notification" },
+    ],
+  };
+
+
 
     return (
         <div className='vh-100 bg-light d-flex flex-column shadow-md-black'>
@@ -88,89 +138,26 @@ function Sidebar({
 
     <div className='flex-grow-1'>
 
-        <SimpleBar style={{ maxHeight: '78vh', overflowX: 'hidden' }} autoHide={false}>
-            <nav className="sidebar-nav scroll-sidebar p-3 " >
-
-                <motion.ul id="sidebarnav" className='d-flex flex-column gap-2' variants={container}
-    initial="hidden"
-    animate="visible">
-                    <motion.li variants={item} className="sidebar-item">
-                        <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/dashboard`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
-
-                        aria-expanded="false">
-                            <span>
-                                <i className="ti ti-home"></i>
-                            </span>
-                            {showSideBar && (
-                                <span className="hide-menu ">Dashboard</span>
-                            )}
-                        </NavLink>
-                    </motion.li>
-                    <motion.li variants={item} className="sidebar-item">
-                        <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/user-management`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
-
-                        aria-expanded="false">
-                            <span>
-                                <i className="ti ti-users"></i>
-                            </span>
-                            {showSideBar && (
-                                <span className="hide-menu ">User Management</span>
-                            )}
-                        </NavLink>
-                    </motion.li>
-                    <motion.li variants={item} className="sidebar-item">
-                        <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/device`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
-
-                        aria-expanded="false">
-                            <span>
-                                <i className="ti ti-devices"></i>
-                            </span>
-                            {showSideBar && (
-                            <span className="hide-menu ">Device Management</span>
-                            )}
-                        </NavLink>
-                    </motion.li>
-                    <motion.li variants={item} className="sidebar-item">
-                        <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/geofence`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
-
-                        aria-expanded="false">
-                            <span>
-                                <i className="ti ti-map"></i>
-                            </span>
-                            {showSideBar && (
-                                <span className="hide-menu ">GeoFencing</span>
-                            )}
-                        </NavLink>
-                    </motion.li>
-                    <motion.li variants={item} className="sidebar-item">
-                        <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/history`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
-
-                        aria-expanded="false">
-                            <span>
-                                <i className="ti ti-history"></i>
-                            </span>
-                            {showSideBar && (
-                                <span className="hide-menu ">Location History</span>
-                            )}
-                        </NavLink>
-                    </motion.li>
-                    <motion.li variants={item} className="sidebar-item">
-                        <NavLink to={`${user?.role === 1? '/super-admin': '/admin'}/notification`} className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")} 
-
-                        aria-expanded="false">
-                            <span>
-                                <i className="ti ti-bell"></i>
-                            </span>
-                            {showSideBar && (
-                            <span className="hide-menu ">Notification</span>
-                            )}
-                        </NavLink>
-                    </motion.li>
-
-
-                </motion.ul>
-            </nav>
-        </SimpleBar>
+    <SimpleBar style={{ maxHeight: "78vh", overflowX: "hidden" }} autoHide={false}>
+      <nav className="sidebar-nav scroll-sidebar p-3">
+        <motion.ul id="sidebarnav" className="d-flex flex-column gap-2">
+          {menuItems[user?.role]?.map((item, index) => (
+            <motion.li key={index} className="sidebar-item">
+              <NavLink
+                to={`${baseRoute}${item.path}`}
+                className={(navData) => (navData.isActive ? "sidebar-link active" : "sidebar-link")}
+                aria-expanded="false"
+              >
+                <span>
+                  <i className={`ti ${item.icon}`}></i>
+                </span>
+                {showSideBar && <span className="hide-menu">{item.label}</span>}
+              </NavLink>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </nav>
+    </SimpleBar>
         </div>
 
         <div

@@ -23,8 +23,8 @@ const refreshToken = async () => {
     }
     const refreshToken = user.refreshToken; // Assuming you store the refresh token along with the access token
     const response = await refreshTokenAPI({ refreshToken }); // Implement your refresh token API call
-    const newToken = response.data.token;
-    setUser(response.data); // Update the token in localStorage or state
+    const newToken = response.token;
+    setUser(response); // Update the token in localStorage or state
     setAuthToken(newToken); // Set the new token in request headers
     return newToken;
   } catch (error) {

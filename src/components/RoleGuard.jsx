@@ -1,32 +1,40 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function RoleGuard({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isLoggedIn, isLoading, user } = useContext(AuthContext);
-  
 
+  const roleRoutes = {
+    1: "/super-admin",
+    2: "/admin",
+    3: "/gardian",
+    4: "/child",
+    5: "/driver",
+  };
+
+  useEffect(() => {
+    if (!isLoading && isLoggedIn) {
+      const allowedRoute = roleRoutes[user.role];
+
+      if (!location.pathname.startsWith(allowedRoute)) {
+        navigate(allowedRoute, { replace: true });
+      }
+    }
+  }, [isLoggedIn, isLoading, user, location.pathname, navigate]);
 
   if (isLoading) {
-    return <></>;
+    return null; // Show nothing while loading
   }
-if(isLoggedIn && location.pathname.startsWith("/super-admin") && user.role === 1){
-  return children;
-}
-  else if (isLoggedIn && location.pathname.startsWith("/admin") && user.role === 2) {
-    return children;
-  }
-  else if (isLoggedIn && location.pathname.startsWith("/super-admin") && user.role === 2) {
-    navigate('/admin/', { replace: true });
+
+  if (!isLoggedIn) {
+    navigate("/auth/login", { replace: true }); // Redirect to login if not authenticated
     return null;
   }
-    else if (isLoggedIn && location.pathname.startsWith("/admin") && user.role === 1) {
-        navigate('/super-admin/', { replace: true });
-        return null;
-    }
-  return children; 
+
+  return children;
 }
 
 export default RoleGuard;

@@ -32,7 +32,6 @@ const useMqtt = () => {
 
   useEffect(() => {
     if (!usersData?.devices?.length) {
-      console.warn("❌ No active devices found. Clearing all clients.");
 
       // **Disconnect all clients & clear state**
       Object.values(clients).forEach((client) => client.end());
