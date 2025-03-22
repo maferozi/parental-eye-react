@@ -6,7 +6,14 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@constants':  './src/constants',
+      '@constants': './src/constants',
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        format: 'cjs', // Ensures CommonJS compatibility
+      },
     },
   },
 })
