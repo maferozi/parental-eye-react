@@ -6,6 +6,7 @@ RUN npm install --omit=dev
 COPY . .
 RUN npm run build
 
+
 # Production Stage (Using Node.js + Serve)
 FROM node:20
 WORKDIR /app
