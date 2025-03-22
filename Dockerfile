@@ -1,29 +1,25 @@
-# Use an official Node.js runtime as a base image
-FROM node:lts-alpine as build
+# Stage 1: Build
+FROM node:20 AS build
 
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
+# Copy package.json and install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy the rest of the application
+# Copy the entire app
 COPY . .
 
-# Build the React application
+# Build the React app
 RUN npm run build
 
-# Use a lightweight web server
-FROM caddy:alpine
+# Stage 2: Serve production build
+FROM caddy:2.7.6-alpine
 
-# Copy build output to the web server directory
+# Copy built files from the previous stage
 COPY --from=build /app/dist /usr/share/caddy
 
-# Expose the default port
-EXPOSE 80
+# Expose port 3000
+EXPOSE 3000
 
-# Start Caddy
-CMD ["caddy", "file-server", "--root", "/usr/share/caddy"]
+# Caddy will serve the static files automatically
