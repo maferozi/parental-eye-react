@@ -188,6 +188,7 @@ const UserManagement = () => {
     })
     if(values.type === "4") refetchChild();
     if(values.type === "5") refetchDriver();
+    if(values.type === "3") refetchParent();
   };
 
 
