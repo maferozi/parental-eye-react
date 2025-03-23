@@ -12,7 +12,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        format: 'cjs', // Ensures CommonJS compatibility
+        format: 'esm', // Ensures CommonJS compatibility
       },
     },
   },
