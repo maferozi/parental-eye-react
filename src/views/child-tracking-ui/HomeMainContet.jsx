@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function HomeMainContent({
   title,
   description,
@@ -31,9 +33,9 @@ export default function HomeMainContent({
               <p className="lead text-center mb-5">{description}</p>
               {showButtons && (
                 <div>
-                  <button className="btn btn-warning btn-lg me-3 mb-3 mb-md-0">
+                  <Link to={"/auth/register"}  className="btn btn-warning btn-lg me-3 mb-3 mb-md-0">
                     {button1Text}
-                  </button>
+                  </Link>
                   <button className="btn btn-outline-light btn-lg me-3 mb-3 mb-md-0">
                     {button2Text}
                   </button>
