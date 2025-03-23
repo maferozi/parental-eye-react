@@ -180,9 +180,9 @@ export default function Register() {
 
           {/* Submit Button */}
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary">
+            <Link to={"/auth/register"} className="btn btn-primary">
               Register
-            </button>
+            </Link>
             <div className="d-flex align-items-center mt-3">
               <hr className="w-50" />
               &nbsp;&nbsp;OR&nbsp;&nbsp;
