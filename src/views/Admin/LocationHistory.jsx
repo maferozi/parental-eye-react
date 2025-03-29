@@ -103,6 +103,7 @@ const LocationHistory = () => {
       <div className="mt-5 border rounded-5 shadow-md p-4">
         <div className="d-flex justify-content-between align-items-center">
           <h3>User Details</h3>
+          
           <input
             className="form-control rounded-pill mb-3"
             style={{ width: "15rem" }}
