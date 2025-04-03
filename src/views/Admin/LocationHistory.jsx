@@ -68,10 +68,35 @@ const LocationHistory = () => {
     usersLocation();
   });
   
-  const pathCoordinates =
-  data?.location?.map((loc) => [loc.location.coordinates[1], loc.location.coordinates[0]]) || [];
+  const pathSegments = [];
+  let currentSegment = [];
+  let currentStatus = null;
   
-  const center = pathCoordinates.length > 0 ? pathCoordinates[0] : [31.5, 74.3];
+  data?.location?.forEach((loc, index) => {
+    const point = [loc.location.coordinates[1], loc.location.coordinates[0]];
+  
+    if (currentStatus === null) {
+      currentStatus = loc.location_status; // Initialize status
+    }
+  
+    if (currentStatus !== loc.location_status) {
+      pathSegments.push({ path: [...currentSegment], status: currentStatus });
+      currentSegment = []; // Reset for next segment
+      currentStatus = loc.location_status;
+    }
+  
+    currentSegment.push(point);
+  });
+  
+  // Push the last segment
+  if (currentSegment.length > 0) {
+    pathSegments.push({ path: [...currentSegment], status: currentStatus });
+  }
+  
+  const center =
+  data?.location?.length > 0
+    ? [data.location[0].location.coordinates[1], data.location[0].location.coordinates[0]]
+    : [31.5, 74.3];
   
   const columns = [
     { key: "firstName", title: "Name", accessorKey: "firstName", header: "Name" },
@@ -145,7 +170,7 @@ const LocationHistory = () => {
       </div>
 
       {/* Modal */}
-      <Modal isOpen={modal} toggle={toggle}>
+      <Modal isOpen={modal} size="lg" toggle={toggle}>
         <ModalHeader toggle={toggle}>Location History</ModalHeader>
         <ModalBody>
           {/* Date Picker Form */}
@@ -201,9 +226,12 @@ const LocationHistory = () => {
             <p>No location data available for the selected date range.</p>
           ) : (
             <MapContainer center={center} zoom={18} style={{ height: "500px", width: "100%" }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
-              <Polyline positions={pathCoordinates} color="red" />
-            </MapContainer>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
+        
+            {pathSegments.map((segment, index) => (
+              <Polyline key={index} positions={segment.path} color={segment.status === 1 ? "green" : "red"} />
+            ))}
+          </MapContainer>
           )}
           
         </ModalBody>
