@@ -5,12 +5,17 @@ import "leaflet/dist/leaflet.css";
 import { useMqttContext } from "../../context/MqttContext";
 import L from "leaflet";
 
-const activeDeviceIcon = new L.Icon({
-  iconUrl: "/location/active-device.png",
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
-});
+// Fix Leaflet default icon issues in React
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 const container = {
   hidden: { opacity: 1, scale: 0 },
   visible: {
@@ -100,7 +105,7 @@ const Dashboard = () => {
               }
 
               return (
-                <Marker key={deviceName} position={[location.latitude, location.longitude]} icon={activeDeviceIcon}>
+                <Marker key={deviceName} position={[location.latitude, location.longitude]}>
                   <Tooltip direction="top" offset={[0, -25]} permanent>
                     <strong>{deviceName}</strong>
                   </Tooltip>
