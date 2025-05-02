@@ -1,5 +1,3 @@
 export default function Reports() {
-    return <>
-        Reports goes here
-    </>
+  return <>Reports goes here</>;
 }
