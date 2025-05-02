@@ -9,8 +9,10 @@ import AnimatedRoute from './components/Layout/AnimateRoute';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setAuthToken } from './api/axios';
 import { me } from './api/auth';
+
 import "react-datepicker/dist/react-datepicker.css";
 import { MqttProvider } from './context/MqttContext';
+import { registerUser } from './utills/socket';
 
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
       setAuthToken(token);
       const response = await me(token);
       setUser(response.user);
+      registerUser(response.user.id);
       setIsLoading(false);
 
     } catch (error) {

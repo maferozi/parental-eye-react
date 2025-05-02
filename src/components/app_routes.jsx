@@ -6,6 +6,7 @@ import Loadable from "./Loadable";
 import Layout from "./Layout/Layout";
 import RouteGuard from "./RouteGuard";
 import RoleGuard from "./RoleGuard";
+import VerifyEmail from "../views/Auth/VerifyEmail";
 
 /* ***Layouts & Views**** */
 const Auth = Loadable(lazy(() => import("../views/Auth/Auth")));
@@ -22,32 +23,32 @@ const AdminDevice = Loadable(lazy(() => import("../views/Admin/DeviceManagement"
 const AdminUserManagement = Loadable(lazy(() => import("../views/Admin/UserManagement")));
 const AdminGeofence = Loadable(lazy(() => import("../views/Admin/Geofence")));
 const AdminHistory = Loadable(lazy(() => import("../views/Admin/LocationHistory")));
-const AdminNotification = Loadable(lazy(() => import("../views/Admin/Notification")));
+const AdminNotification = Loadable(lazy(() => import("../views/Notification")));
 const AdminReport = Loadable(lazy(() => import("../views/Admin/Report")));
 
 // Super Admin Views
 const SuperAdminDashboard = Loadable(lazy(() => import("../views/SuperAdmin/Dashboard")));
 const SuperAdminUserManagement = Loadable(lazy(() => import("../views/SuperAdmin/UserManagement")));
 const SuperAdminDeviceManagement = Loadable(lazy(() => import("../views/SuperAdmin/DeviceManagement")));
-const SuperAdminNotification = Loadable(lazy(() => import("../views/SuperAdmin/Notification")));
+const SuperAdminNotification = Loadable(lazy(() => import("../views/Notification")));
 const SuperAdminReport = Loadable(lazy(() => import("../views/SuperAdmin/Report")));
 
 // Gardian Views
 const GardianDashboard = Loadable(lazy(() => import("../views/Gardian/Dashboard")));
 const GardianHistory = Loadable(lazy(() => import("../views/Gardian/LocationHistory")));
-const GardianNotification = Loadable(lazy(() => import("../views/Gardian/Notification")));
+const GardianNotification = Loadable(lazy(() => import("../views/Notification")));
 const GardianReport = Loadable(lazy(() => import("../views/Gardian/Report")));
 
 // Drvier Views
 const DriverDashboard = Loadable(lazy(() => import("../views/Driver/Dashboard")));
 const DriverHistory = Loadable(lazy(() => import("../views/Driver/LocationHistory")));
-const DriverNotification = Loadable(lazy(() => import("../views/Driver/Notification")));
+const DriverNotification = Loadable(lazy(() => import("../views/Notification")));
 const DriverReport = Loadable(lazy(() => import("../views/Driver/Report")));
 
 // Drvier Views
 const ChildDashboard = Loadable(lazy(() => import("../views/Child/Dashboard")));
 const ChildHistory = Loadable(lazy(() => import("../views/Child/LocationHistory")));
-const ChildNotification = Loadable(lazy(() => import("../views/Child/Notification")));
+const ChildNotification = Loadable(lazy(() => import("../views/Notification")));
 const ChildReport = Loadable(lazy(() => import("../views/Child/Report")));
 
 // Child Tracking UI Views
@@ -88,6 +89,7 @@ const app_routes = [
       { path: "/auth/login", exact: true, element: <Login /> },
       { path: "/auth/register", exact: true, element: <Register /> },
       { path: "/auth/forget/:token?", exact: true, element: <Forget /> },
+      { path: "/auth/verify-email/:token", exact: true, element: <VerifyEmail /> },
       { path: "*", element: <Navigate to="/home" /> },
     ],
   },

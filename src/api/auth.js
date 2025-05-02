@@ -80,3 +80,7 @@ export const resetPassword = (body) => {
         body
     ).then(res => res.data)
 }
+
+export const verifyEmail = async (token) => {
+    return await axios.get(`${BASE_URL}/api/auth/verify-email/${token}`).then((res) => res.data);
+  };

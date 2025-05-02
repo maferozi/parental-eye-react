@@ -37,11 +37,12 @@ export default function Register() {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        await register(values);
+        Swal.fire({ title: "Processing...", didOpen: () => Swal.showLoading() });
+        const res = await register(values);
         Swal.fire({
           position: "center",
           icon: "success",
-          title: "Your account has been created successfully!",
+          title: res.message || "Your account has been created successfully!",
           showConfirmButton: false,
           timer: 1500,
         });

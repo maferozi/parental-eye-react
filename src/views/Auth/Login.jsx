@@ -29,6 +29,7 @@ export default function Login() {
     validationSchema,
     onSubmit: async (values) => {
       try {
+        Swal.fire({ title: "Processing...", didOpen: () => Swal.showLoading() });
         const response = await login(values);
         Swal.fire({
           position: "center",
