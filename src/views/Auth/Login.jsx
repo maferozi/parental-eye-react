@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+// import { useContext } from "react";
+// import { AuthContext } from "../../context/AuthContext";
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -10,7 +10,7 @@ import { setUser } from "../../utills/user";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login: setJwtInContext } = useContext(AuthContext);
+  // const { login: setJwtInContext } = useContext(AuthContext);
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -38,10 +38,10 @@ export default function Login() {
           showConfirmButton: false,
           timer: 1500,
         });
-        //setUser(response.token);
-        //window.location.reload();
-        setJwtInContext(response.token);
-        navigate("/"); // or wherever you want to go after login
+        setUser(response.token);
+        window.location.reload();
+        // setJwtInContext(response.token);
+        // navigate("/"); // or wherever you want to go after login
       } catch (error) {
         console.log(error);
         Swal.fire({
