@@ -25,6 +25,7 @@ const UserManagement = () => {
 
   const childSearchQuery = searchParams.get("childSearchQuery") || "";
   const driverSearchQuery = searchParams.get("driverSearchQuery") || "";
+  const gardianSearchQuery = searchParams.get("gardianSearchQuery") || "";
 
   // Fetch paired users
   const {
@@ -44,6 +45,8 @@ const UserManagement = () => {
 
   const pageNoDriver = Number(searchParams.get("pageNoDriver")) || 1;
   const pageSizeDriver = Number(searchParams.get("pageSizeDriver")) || 5;
+  const pageNoGardian = Number(searchParams.get("pageNoGardian")) || 1;
+  const pageSizeGardian = Number(searchParams.get("pageSizeGardian")) || 5;
 
   const {
     data: driverData,
@@ -65,27 +68,37 @@ const UserManagement = () => {
     isLoading: parentLoading,
     refetch: refetchParent,
   } = useQuery({
-    queryKey: ["parentData", pageNoDriver, pageSizeDriver],
+    queryKey: ["parentData", pageNoGardian, pageSizeGardian],
     queryFn: () =>
       getAllInvitedUser({
-        pageNo: pageNoDriver,
-        limit: pageSizeDriver,
+        pageNo: pageNoGardian,
+        limit: pageSizeGardian,
         role: 3,
-        search: driverSearchQuery,
+        search: gardianSearchQuery,
       }),
   });
 
   const handleChildPageChange = (newPageNo) => {
-    setSearchParams({ pageNoChild: newPageNo, pageNoDriver });
+    setSearchParams({ pageNoChild: newPageNo, pageNoDriver,pageNoGardian });
     refetchChild();
   };
 
   const handleDriverPageChange = (newPageNo) => {
-    setSearchParams({ pageNoDriver: newPageNo, pageNoChild });
+    setSearchParams({ pageNoDriver: newPageNo, pageNoChild,pageNoGardian });
+    refetchDriver();
+  };
+  const handleGardianPageChange = (newPageNo) => {
+    setSearchParams({ pageNoGardian: newPageNo, pageNoChild, pageNoDriver });
     refetchDriver();
   };
 
   const columnChild = [
+    {
+      key: "id",
+      title: "ID",
+      accessorKey: "id",
+      header: "ID",
+    },
     {
       key: "fullName",
       title: "Name",
@@ -120,6 +133,12 @@ const UserManagement = () => {
   ];
   const columnDriver = [
     {
+      key: "id",
+      title: "ID",
+      accessorKey: "id",
+      header: "ID",
+    },
+    {
       key: "fullName",
       title: "Name",
       accessorKey: "fullName",
@@ -140,15 +159,40 @@ const UserManagement = () => {
     },
   ];
 
+  const columnGardian = [
+    {
+      key: "id",
+      title: "ID",
+      accessorKey: "id",
+      header: "ID",
+    },
+    {
+      key: "fullName",
+      title: "Name",
+      accessorKey: "fullName",
+      header: "User Name",
+    },
+    { key: "type", title: "Type", accessorKey: "type", header: "User Type" },
+    {
+      key: "action",
+      title: "Action",
+      accessorKey: "action",
+      header: "Actions",
+    },
+  ];
+
   const renderRow = (item) => (
     <tr key={item.id}>
+      <td>
+        {item.id}
+      </td>
       <td>
         {item.firstName} {item.lastName}
       </td>
       <td>{item.role === 4 ? "Child" : "Driver"}</td>
-      <td className={`${item.status == 1 ? "text-success" : "text-warning"}`}>
+      {item.role === 4 || item.role === 5 && <td className={`${item.status == 1 ? "text-success" : "text-warning"}`}>
         {item.status === 1 ? "Paired" : "Unpaired"}
-      </td>
+      </td>}
       {item.role === 4 && <td>{item.parentId || "Free"}</td>}
       {item.role === 4 && <td>{item.driverId || "Free"}</td>}
       <td>
@@ -374,6 +418,43 @@ const UserManagement = () => {
           />
         )}
         {driverLoading && (
+          <div className="w-100">
+            <Skeleton count={1} height={50} />
+            <Skeleton count={5} height={40} />
+          </div>
+        )}
+      </div>
+
+      <div className="border rounded-5 shadow-md p-4 mt-5">
+        <div className="d-flex justify-content-between align-items-center">
+          <h4>Gardian</h4>
+          <input
+            className="form-control rounded-pill"
+            style={{ width: "10rem" }}
+            type="text"
+            placeholder="Search"
+            onChange={async (e) => {
+              const newParams = new URLSearchParams(searchParams);
+              newParams.set("gardianSearchQuery", e.target.value);
+              await setSearchParams(newParams);
+              refetchParent();
+            }}
+          />
+        </div>
+        {driverData && (
+          <DataTable
+            loading={parentLoading}
+            columns={columnGardian}
+            data={parentData.data}
+            renderRow={renderRow}
+            pageSize={parentData.limit}
+            pageNo={parentData.pageNo}
+            totalCount={parentData.count}
+            onPageChange={handleDriverPageChange}
+            noDataTitle="No paired users available."
+          />
+        )}
+        {parentLoading && (
           <div className="w-100">
             <Skeleton count={1} height={50} />
             <Skeleton count={5} height={40} />
