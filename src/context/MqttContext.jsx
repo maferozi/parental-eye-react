@@ -4,10 +4,10 @@ import useMqtt from "../hook/useMqtt";
 const MqttContext = createContext();
 
 export const MqttProvider = ({ children }) => {
-  const { deviceLocations, clients } = useMqtt(); // Get all active MQTT data
+  const { deviceLocations, clients, stats } = useMqtt(); // Get all active MQTT data
 
   return (
-    <MqttContext.Provider value={{ deviceLocations, clients }}>
+    <MqttContext.Provider value={{ deviceLocations, clients, stats }}>
       {children}
     </MqttContext.Provider>
   );
