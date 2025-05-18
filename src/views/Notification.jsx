@@ -45,12 +45,14 @@ const Notification = () => {
   const columns = [
     { header: 'Notification Type', accessorKey: 'type' },
     { header: 'Device ID', accessorKey: 'deviceId' },
+    { header: 'User ID', accessorKey: 'userId' },
     { header: 'Created At', accessorKey: 'createdAt' },
     { header: 'Action', accessorKey: 'action' },
   ];
 
   const renderRow = (notification) => {
     const deviceId = notification?.data?.deviceId;
+    const userId = notification?.data?.childId;
     const location = notification?.data?.location;
     const createdAt = new Date(notification.created_at).toLocaleString();
 
@@ -66,6 +68,7 @@ const Notification = () => {
       <tr key={notification.id} className={`${notification.data.is_read == false? 'bg-blue': 'bg-white'}`}>
         <td>{notification.type}</td>
         <td>{deviceId || 'N/A'}</td>
+        <td>{userId || 'N/A'}</td>
         <td>{createdAt}</td>
         <td>
           {location ? (
