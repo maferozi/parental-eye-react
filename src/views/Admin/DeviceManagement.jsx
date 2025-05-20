@@ -7,7 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Skeleton from "react-loading-skeleton";
-import {  assignDeviceToChild, deleteDevice, getAllDevices, getUnassignedChild, unAssignChild } from "../../api/device";
+import {  assignDeviceToChild, createDeviceRequest, deleteDevice, getAllDevices, getDeviceRequest, getUnassignedChild, unAssignChild } from "../../api/device";
+import Swal from "sweetalert2";
 
 const AdminDeviceManagement = () => {
   const [modal, setModal] = useState(false);
@@ -21,6 +22,11 @@ const AdminDeviceManagement = () => {
   const { data: devices, isLoading, refetch:refetchDevice } = useQuery({
     queryKey: ["adminDevices", pageNo, pageSize, searchQuery],
     queryFn: () => getAllDevices({ pageNo, limit: pageSize, search: searchQuery }),
+  });
+
+  const { data: deviceRequests, isRequestLoading, refetch:refetchDeviceRequest } = useQuery({
+    queryKey: ["adminDevices", pageNo, pageSize, searchQuery],
+    queryFn: () => getDeviceRequest({ pageNo, limit: pageSize, search: searchQuery }),
   });
 
   function refetch(){
@@ -41,9 +47,29 @@ const AdminDeviceManagement = () => {
   });
 
   const handleSubmit = async (values, { resetForm }) => {
-    // await requestDevice(values);
+    
+    try {
+      const response = await createDeviceRequest({noOfDevices:values.amount});
+      Swal.fire({
+          position: "center",
+          icon: "success",
+          title: response.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
     toggle();
     resetForm();
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+
   };
 
 

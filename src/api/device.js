@@ -67,3 +67,17 @@ export const unAssignChild = (id) => {
         `${BASE_URL}/api/device/unassign-child/${id}`
     ).then(res => res.data);
 }
+
+
+export const createDeviceRequest = (body)=>{
+    return axiosClient.post(
+        `${BASE_URL}/api/device-request/`,body
+    ).then(res => res.data);
+}
+
+
+export const getDeviceRequest = ()=>{
+    return axiosClient.get(
+        `${BASE_URL}/api/device-request/`
+    ).then(res => res.data);
+}
