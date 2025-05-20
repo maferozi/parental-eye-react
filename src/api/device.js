@@ -87,3 +87,9 @@ export const deleteDeviceRequest = (id)=>{
         `${BASE_URL}/api/device-request/${id}`
     ).then(res => res.data);
 }
+
+export const upadateDeviceRequestStatus = (body)=>{
+    return axiosClient.patch(
+        `${BASE_URL}/api/device-request/`, body
+    ).then(res => res.data);
+}
