@@ -81,3 +81,9 @@ export const getDeviceRequest = ()=>{
         `${BASE_URL}/api/device-request/`
     ).then(res => res.data);
 }
+
+export const deleteDeviceRequest = (id)=>{
+    return axiosClient.delete(
+        `${BASE_URL}/api/device-request/${id}`
+    ).then(res => res.data);
+}
