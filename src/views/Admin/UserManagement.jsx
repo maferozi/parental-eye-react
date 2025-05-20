@@ -445,11 +445,11 @@ const UserManagement = () => {
           <DataTable
             loading={parentLoading}
             columns={columnGardian}
-            data={parentData.data}
+            data={parentData?.data}
             renderRow={renderRow}
-            pageSize={parentData.limit}
-            pageNo={parentData.pageNo}
-            totalCount={parentData.count}
+            pageSize={parentData?.limit}
+            pageNo={parentData?.pageNo}
+            totalCount={parentData?.count}
             onPageChange={handleDriverPageChange}
             noDataTitle="No paired users available."
           />
