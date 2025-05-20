@@ -47,7 +47,7 @@ const useMqtt = () => {
     }
 
     const activeDevices = usersData.devices.reduce((acc, device) => {
-      acc[device.deviceName] = [device.password, `${device.user.firstName} ${device.user.lastName}`];
+      acc[device.deviceName] = [device.password, `${device?.user?.firstName} ${device?.user?.lastName}`];
       return acc;
     }, {});
 
