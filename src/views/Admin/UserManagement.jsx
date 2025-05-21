@@ -189,8 +189,8 @@ const UserManagement = () => {
       <td>
         {item.firstName} {item.lastName}
       </td>
-      <td>{item.role === 4 ? "Child" : "Driver"}</td>
-      {item.role === 4 || item.role === 5 && <td className={`${item.status == 1 ? "text-success" : "text-warning"}`}>
+      <td>{item.role === 4 ? "Child":item.role===5? "Driver": "Gardian"}</td>
+      {(item.role === 4 || item.role === 5) && <td className={`${item.status == 1 ? "text-success" : "text-warning"}`}>
         {item.status === 1 ? "Paired" : "Unpaired"}
       </td>}
       {item.role === 4 && <td>{item.parentId || "Free"}</td>}
