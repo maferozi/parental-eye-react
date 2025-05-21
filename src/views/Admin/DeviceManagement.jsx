@@ -249,11 +249,11 @@ const AdminDeviceManagement = () => {
       >
         {({ isSubmitting }) => (
           <Form className="mt-4 border p-4 rounded-5">
-            <h5>Assign Device to Parent</h5>
+            <h5>Assign Device</h5>
             <div className="mb-3">
-              <label>Select Parent:</label>
+              <label>Select User:</label>
               <Field as="select" name="childId" className="form-control">
-                <option value="">-- Select Child --</option>
+                <option value="">-- Select User --</option>
                 {!loadingChildren && children.data.map((child) => (
                   <option key={child.id} value={child.id}>
                     {child.id + " | " + child.firstName + " " + child.lastName} 

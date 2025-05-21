@@ -93,3 +93,15 @@ export const upadateDeviceRequestStatus = (body)=>{
         `${BASE_URL}/api/device-request/`, body
     ).then(res => res.data);
 }
+
+export const setDeviceMoniteringTime = (body)=>{
+    return axiosClient.put(
+        `${BASE_URL}/api/device/set-time/`, body
+    ).then(res => res.data);
+}
+
+export const getDeviceMoniteringTime = ()=>{
+    return axiosClient.get(
+        `${BASE_URL}/api/device/get-time/`,
+    ).then(res => res.data);
+}
