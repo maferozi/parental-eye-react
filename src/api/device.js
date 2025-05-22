@@ -67,3 +67,41 @@ export const unAssignChild = (id) => {
         `${BASE_URL}/api/device/unassign-child/${id}`
     ).then(res => res.data);
 }
+
+
+export const createDeviceRequest = (body)=>{
+    return axiosClient.post(
+        `${BASE_URL}/api/device-request/`,body
+    ).then(res => res.data);
+}
+
+
+export const getDeviceRequest = ()=>{
+    return axiosClient.get(
+        `${BASE_URL}/api/device-request/`
+    ).then(res => res.data);
+}
+
+export const deleteDeviceRequest = (id)=>{
+    return axiosClient.delete(
+        `${BASE_URL}/api/device-request/${id}`
+    ).then(res => res.data);
+}
+
+export const upadateDeviceRequestStatus = (body)=>{
+    return axiosClient.patch(
+        `${BASE_URL}/api/device-request/`, body
+    ).then(res => res.data);
+}
+
+export const setDeviceMoniteringTime = (body)=>{
+    return axiosClient.put(
+        `${BASE_URL}/api/device/set-time/`, body
+    ).then(res => res.data);
+}
+
+export const getDeviceMoniteringTime = ()=>{
+    return axiosClient.get(
+        `${BASE_URL}/api/device/get-time/`,
+    ).then(res => res.data);
+}

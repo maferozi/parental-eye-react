@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Skeleton from "react-loading-skeleton";
-import { addDevice, deleteDevice, getAllDevices, assignDeviceToParent, unAssignParent } from "../../api/device";
+import { addDevice, deleteDevice, getAllDevices, assignDeviceToParent, unAssignParent, getDeviceRequest, upadateDeviceRequestStatus } from "../../api/device";
 import { getAdminParent } from "../../api/auth";
 
 const DeviceManagement = () => {
@@ -21,14 +21,31 @@ const DeviceManagement = () => {
   const pageSize = Number(searchParams.get("pageSize")) || 5;
   const searchQuery = searchParams.get("searchQuery") || "";
 
+  
+  const requestPageNo = Number(searchParams.get("requestPageNo")) || 1;
+  const requestPageSize = Number(searchParams.get("requestPageSize")) || 5;
+  const requestSearchQuery = searchParams.get("requestSearchQuery") || "";
+
   const { data: devices, isLoading, refetch } = useQuery({
     queryKey: ["devices", pageNo, pageSize, searchQuery],
     queryFn: () => getAllDevices({ pageNo, limit: pageSize, search: searchQuery }),
   });
 
+
+  const { data: deviceRequests, isRequestLoading, refetch:refetchDeviceRequest } = useQuery({
+    queryKey: ["superAdminDevicesRequest", requestPageNo, requestPageSize, requestSearchQuery],
+    queryFn: () => getDeviceRequest({ pageNo:requestPageNo, limit: requestPageSize, search: requestSearchQuery }),
+  });
+
+
   const handlePageChange = (newPageNo) => {
-    setSearchParams({ pageNo: newPageNo });
+    setSearchParams({ pageNo: newPageNo , requestPageNo});
     refetch();
+  };
+
+    const handleRequestPageChange = (newPageNo) => {
+    setSearchParams({ pageNo, requestPageNo: newPageNo });
+    refetchDeviceRequest();
   };
 
   useEffect(() => {
@@ -84,13 +101,21 @@ const DeviceManagement = () => {
     { key: "action", title: "Action", accessorKey: "action", header: "Actions" },
   ];
 
+  const requestColumn = [
+    { key: "id", title: "ID", accessorKey: "id", header: "ID" },
+    { key: "userId", title: "User", accessorKey: "userId", header: "User" },
+    { key: "deviceCount", title: "Device Count", accessorKey: "deviceCount", header: "Device Count" },
+    { key: "status", title: "Status", accessorKey: "status", header: "Status" },
+    { key: "action", title: "Action", accessorKey: "action", header: "Actions" },
+  ];
+
   const renderRow = (item) => (
     <tr key={item.id} className={`${item.parentId == null ? "text-warning": ""}`}>
       <td>{item.deviceName}</td>
       <td>{item.password}</td>
       <td>{item.parentId != null ? item?.parentId : "Unassigned"}</td>
       <td>{item.userId != null ? item.userId : "Free"}</td>
-      <td>{item.status == 2 ? "Active" : "Inactive"}</td>
+      <td>{item.status == 1 ? "Active" : "Inactive"}</td>
       <td>
         <Dropdown>
           <Dropdown.Toggle variant="light">
@@ -114,6 +139,60 @@ const DeviceManagement = () => {
               className="text-warning"
             >
               Unassign
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </td>
+    </tr>
+  );
+
+ const requestRenderRow = (item) => (
+    <tr key={item.id}>
+      <td>{item.id}</td>
+      <td>{item.userId}</td>
+      <td>{item.deviceCount}</td>
+      <td
+  className={
+    item.status === 1
+      ? "text-warning"
+      : item.status === 2
+      ? "text-success"
+      : "text-danger"
+  }
+>
+  {item.status === 1
+    ? "Pending"
+    : item.status === 2
+    ? "Accepted"
+    : "Rejected"}
+</td>
+
+      <td>
+        <Dropdown>
+          <Dropdown.Toggle variant="light">
+            <i className="ti ti-dots"></i>
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={async () => {
+              await upadateDeviceRequestStatus({id:item.id, status: 2});
+              refetchDeviceRequest();
+            }}
+            className="text-success">
+              <i className="ti ti-circle-check"> Approve</i>
+            </Dropdown.Item>
+            <Dropdown.Item onClick={async () => {
+              await upadateDeviceRequestStatus({id:item.id, status: 3});
+              refetchDeviceRequest();
+            }}
+            className="text-warning">
+              <i className="ti ti-ban"> Reject</i>
+            </Dropdown.Item>
+            <Dropdown.Item onClick={async () => {
+              await deleteDeviceRequest(item.id);
+              refetchDeviceRequest();
+            }}
+            className="text-danger">
+              <i className="ti ti-trash"> delete</i>
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
@@ -245,6 +324,44 @@ const DeviceManagement = () => {
           </Formik>
         </ModalBody>
       </Modal>
+
+     <div className="mt-5 border rounded-5 shadow-md p-4">
+        <div className="d-flex justify-content-between align-items-center">
+          <h4>Requested List</h4>
+          <input
+            className="form-control rounded-pill"
+            style={{ width: "10rem" }}
+            type="text"
+            placeholder="Search"
+            onChange={async (e) => {
+              setSearchParams({ requestSearchQuery: e.target.value , searchQuery});
+              refetchDeviceRequest();
+            }}
+          />
+        </div>
+        {deviceRequests && (
+          <DataTable
+            loading={isRequestLoading}
+            columns={requestColumn}
+            data={deviceRequests?.data}
+            renderRow={requestRenderRow}
+            pageSize={deviceRequests?.limit}
+            pageNo={deviceRequests?.pageNo}
+            totalCount={deviceRequests?.count}
+            onPageChange={handleRequestPageChange}
+            noDataTitle="No devices available."
+          />
+        )}
+        {isLoading && (
+          <div className="w-100">
+            <Skeleton count={1} height={50} />
+            <Skeleton count={5} height={40} />
+          </div>
+        )}
+      </div>
+
+
+
     </div>
   );
 };
