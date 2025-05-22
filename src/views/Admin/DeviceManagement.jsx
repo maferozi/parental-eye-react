@@ -126,6 +126,8 @@ const AdminDeviceManagement = () => {
   const column = [
     { key: "deviceName", title: "Device Name", accessorKey: "deviceName", header: "Device Name" },
     { key: "userId", title: "User", accessorKey: "userId", header: "User" },
+    { key: "location_start_time", title: "Start time", accessorKey: "location_start_time", header: "Start time" },
+    { key: "location_end_time", title: "End time", accessorKey: "location_end_time", header: "End time" },
     { key: "status", title: "Status", accessorKey: "status", header: "Status" },
     { key: "action", title: "Action", accessorKey: "action", header: "Actions" },
   ];
@@ -141,6 +143,9 @@ const AdminDeviceManagement = () => {
     <tr key={item.id}>
       <td>{item.deviceName}</td>
       <td className={`${item.userId != null ? 'text-success': 'text-danger'}`}>{item.userId != null ? item.userId : 'Free'}</td>
+
+      <td>{item.location_start_time}</td>
+      <td>{item.location_end_time}</td>
       <td className={`${item.status == 1 ? 'text-success': 'text-warning'}`}>{item.status === 1 ? "Active" : "Inactive"}</td>
       <td>
         <Dropdown>
