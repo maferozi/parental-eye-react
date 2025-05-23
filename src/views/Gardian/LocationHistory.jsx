@@ -15,6 +15,7 @@ import { socket } from "../../utills/socket";
 
 
 const LocationHistory = () => {
+
   const [modal, setModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [pageNo, setPageNo] = useState(1);
@@ -238,6 +239,7 @@ const LocationHistory = () => {
       </Modal>
     </div>
   );
+
 };
 
 export default LocationHistory;

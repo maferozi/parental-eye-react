@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import { Button, Modal, ModalHeader, ModalBody } from "reactstrap";
 import "leaflet/dist/leaflet.css";
@@ -236,6 +237,7 @@ const LocationHistory = () => {
           
         </ModalBody>
       </Modal>
+
     </div>
   );
 };
