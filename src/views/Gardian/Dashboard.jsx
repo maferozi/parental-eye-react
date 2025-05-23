@@ -1,142 +1,131 @@
-import { Dropdown } from "react-bootstrap";
+
 import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { useMqttContext } from "../../context/MqttContext";
+import L from "leaflet";
 
-export default function Dashboard() {
-  const cardVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
+// Fix Leaflet default icon issues in React
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-  const userData = [
-    { id: 1, firstName: "Ali", lastName: "Khan", role: 4, status: 1,  driverId: "D456" },
-    { id: 2, firstName: "Jacob", lastName: "Smith", role: 5, status: 2,  driverId: "D789" },
-    { id: 3, firstName: "Larry", lastName: "Bird", role: 4, status: 2, driverId: "" }
-  ];
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+const container = {
+  hidden: { opacity: 1, scale: 0 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { delayChildren: 0.3, staggerChildren: 0.2 },
+  },
+};
 
-  const renderRow = (item) => (
-    <tr key={item.id} className="border-bottom">
-      <td>{item.firstName} {item.lastName}</td>
-      <td>{item.role === 4 ? "Child" : "Driver"}</td>
-      <td className={`${item.status === 1 ? 'text-success' : 'text-warning'}`}>
-        {item.status === 1 ? "Paired" : "Unpaired"}
-      </td>
-      
-      <td>{item.role === 4 ? (item.driverId || "Free") : "-"}</td>
-      <td>
-        <Dropdown>
-          <Dropdown.Toggle variant="light">
-            <i className="ti ti-dots"></i>
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item className="text-danger">Delete</Dropdown.Item>
-            <Dropdown.Item className="text-warning" onClick={() => { handleUpdateUser(item.id) }}>Update</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </td>
-    </tr>
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 },
+};
+
+
+
+const DynamicMapView = ({ locations }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (locations.length === 0) return;
+
+    if (locations.length === 1) {
+      map.setView([locations[0].latitude, locations[0].longitude], 18);
+    } else {
+      const bounds = L.latLngBounds(locations.map((loc) => [loc.latitude, loc.longitude]));
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }, [locations, map]);
+
+  return null;
+};
+
+const Dashboard = () => {
+  const { deviceLocations , stats} = useMqttContext();
+  const [filteredLocations, setFilteredLocations] = useState({});
+
+  const cards = [
+  { id: 1, img: "/totalUser.png", description: "Total Users", number: stats?.totalUsers },
+  { id: 3, img: "/totalDecive.png", description: "Total Devices", number: stats?.totalDevices },
+  { id: 4, img: "/activeDevice.png", description: "Active Devices", number: stats?.activeDevices },
+  { id: 5, img: "/moreInfo.png", description: "More Info" },
+];
+
+  useEffect(() => {
+    setFilteredLocations(deviceLocations);
+  }, [deviceLocations]);
+
+  const validDevices = Object.values(filteredLocations).filter(
+    (loc) => loc?.latitude !== undefined && loc?.longitude !== undefined
   );
 
+  const defaultCenter = [31.4989331, 74.3101176];
   return (
-    <>
-      <motion.div
-        className="row row-cols-1 row-cols-md-5 g-3 bg-primary p-2 rounded"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 1 },
-          visible: { transition: { staggerChildren: 0.2 } },
-        }}
-      >
-        {[
-          { title: "Total User", value: 5, image: "/totalUser.png" },
-          { title: "Total Devices", value: 7, image: "/totalDevice.png" },
-          { title: "Users", value: 2, image: "/activeUser.png" },
-          { title: "Devices", value: 3, image: "/activeDevice.png" },
-          { title: "More Info", value: 3, image: "/moreInfo.png" },
-        ].map((item, index) => (
-          <motion.div key={index} className="col" variants={cardVariants}>
-            <div className="card h-100">
-              <div className="card-body shadow text-center">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="img-fluid mb-2"
-                  style={{ height: "30px", width: "30px" }}
-                />
-                <h5 className="card-title">{item.title}</h5>
-                <p className="card-text">{item.value}</p>
+    <div className="d-flex flex-column align-items-center">
+      <div className="container">
+        <motion.ul
+          variants={container}
+          initial="hidden"
+          animate="visible"
+          className="row justify-content-between m-auto gap-2 bg-primary p-4 rounded-5 shadow-md-black"
+        >
+          {cards.map((card) => (
+            <motion.li variants={item} className="col-12 col-sm-6 col-md-4 col-lg-2" key={card.id}>
+              <div className="card h-100 rounded-5">
+                <div className="card-body d-flex flex-column justify-content-around align-items-center">
+                  <img style={{ width: "30px" }} src={card?.img} alt="Img" />
+                  <h6 className="text-center">{card?.description}</h6>
+                  <h6 className="fw-bolder">{card?.number}</h6>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+            </motion.li>
+          ))}
+        </motion.ul>
 
-      <div className="row">
-        <div className="col-md-7 mt-3">
-          <div className="card shadow-lg">
-           
-            <div className="card-body">
-              <div className="table-responsive" style={{ maxHeight: "300px", overflowY: "auto" }}>
-                <table className="table table-borderless table-hover">
-                  <thead>
-                    <tr className="border-bottom fs-5">
-                      <th>Name</th>
-                      <th>Role</th>
-                      <th>Status</th>
-                      <th>Driver ID</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userData.filter(user => user.role === 4).map(renderRow)}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div className="row justify-content-around mt-5">
+          <MapContainer center={defaultCenter} zoom={18} style={{ height: "500px", width: "100%" }} className="rounded-5">
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
 
-        <div className="col-md-5 mt-3">
-          <div className="card text-bg-light mb-3">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h4 className="fw-bold">Recent Alerts</h4>
-              <div className="dropdown">
-                <button type="button" className="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                  Options
-                </button>
-                <ul className="dropdown-menu">
-                  <li><a className="dropdown-item" href="#">View All</a></li>
-                  <li><a className="dropdown-item" href="#">Mark as Read</a></li>
-                  <li><a className="dropdown-item" href="#">Clear Alerts</a></li>
-                </ul>
-              </div>
-            </div>
-            <div className="card-body">
-              <ul className="list-group list-group-flush">
-                {[
-                  "New user registered",
-                  "Device added successfully",
-                  "Warning: Unusual login attempt",
-                ].map((alert, index) => (
-                  <li key={index} className="list-group-item shadow-sm rounded-pill mb-3">
-                    {alert}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+            <DynamicMapView locations={validDevices} />
+
+            {Object.entries(filteredLocations).map(([deviceName, location]) => {
+              if (!location || location.latitude === undefined || location.longitude === undefined) {
+                return null;
+              }
+              const {fullName} = location;
+              return (
+                <Marker key={deviceName} position={[location.latitude, location.longitude]}>
+                  <Tooltip direction="top" offset={[0, -25]} permanent>
+                    <strong>{fullName}</strong>
+                  </Tooltip>
+                  <Popup>
+                    <strong>{deviceName}</strong>
+                    <br />
+                    Lat: {location.latitude}
+                    <br />
+                    Lng: {location.longitude}
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </MapContainer>
         </div>
       </div>
-
-      <div className="card mb-3">
-        <h4 className="card-title text-center m-3 fw-bold">Map shows here</h4>
-        <img src="/images/map.png" className="img-fluid" alt="Map" />
-        <div className="card-body">
-          <p className="card-text">
-            <small className="text-body-secondary">Last updated 3 mins ago</small>
-          </p>
-        </div>
-      </div>
-    </>
+    </div>
   );
-}
+};
+
+export default Dashboard;

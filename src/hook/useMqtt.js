@@ -5,12 +5,11 @@ import { getActiveDevices } from "../api/device";
 import { useQuery } from "@tanstack/react-query";
 import { socket } from "../utills/socket";
 
-const INACTIVITY_THRESHOLD = 30000;
-
 const useMqtt = () => {
   const [clients, setClients] = useState({}); // Store MQTT clients per device
   const [deviceLocations, setDeviceLocations] = useState({}); // Store active device locations
-  const [lastSeen, setLastSeen] = useState({}); // Track last seen time
+  const [stats, setStats] = useState();
+
 
   // Fetch active devices when the device status changes
   const { data: usersData, refetch: refreshDevices } = useQuery({
@@ -20,7 +19,7 @@ const useMqtt = () => {
         return await getActiveDevices();
       } catch (error) {
         console.error("🚨 Error fetching active devices:", error);
-        return { devices: [] }; // Return empty list to clear everything
+        return { devices: [] };
       }
     },
   });
@@ -31,55 +30,54 @@ const useMqtt = () => {
   }, []);
 
   useEffect(() => {
+
+    setStats({
+      totalDevices:usersData?.totalCount || 0,
+      activeDevices:usersData?.activeCount || 0,
+      totalUsers: usersData?.totalUsers || 0,
+    })
+
+
     if (!usersData?.devices?.length) {
-
-      // **Disconnect all clients & clear state**
+      // Disconnect all clients & clear state
       Object.values(clients).forEach((client) => client.end());
-
       setClients({});
       setDeviceLocations({});
-      setLastSeen({});
       return;
     }
 
     const activeDevices = usersData.devices.reduce((acc, device) => {
-      acc[device.deviceName] = device.password;
+      acc[device.deviceName] = [device.password, `${device?.user?.firstName} ${device?.user?.lastName}`];
       return acc;
     }, {});
 
     const currentClients = Object.keys(clients);
 
-    // **1. Remove Inactive Devices**
+    // Remove Inactive Devices
     currentClients.forEach((deviceName) => {
       if (!activeDevices[deviceName]) {
         console.warn(`❌ Removing inactive device: ${deviceName}`);
-        clients[deviceName].end(); // Disconnect MQTT client
+        clients[deviceName].end();
 
         setClients((prev) => {
-          const updatedClients = { ...prev };
-          delete updatedClients[deviceName];
-          return updatedClients;
+          const updated = { ...prev };
+          delete updated[deviceName];
+          return updated;
         });
 
         setDeviceLocations((prev) => {
-          const updatedLocations = { ...prev };
-          delete updatedLocations[deviceName]; // Remove from map
-          return updatedLocations;
-        });
-
-        setLastSeen((prev) => {
-          const updatedLastSeen = { ...prev };
-          delete updatedLastSeen[deviceName];
-          return updatedLastSeen;
+          const updated = { ...prev };
+          delete updated[deviceName];
+          return updated;
         });
       }
     });
 
-    // **2. Add Newly Active Devices**
-    Object.entries(activeDevices).forEach(([deviceName, password]) => {
-      if (clients[deviceName]) return; // Skip if already connected
+    // Add Newly Active Devices
+    Object.entries(activeDevices).forEach(([deviceName, [password, fullName]]) => {
+      if (clients[deviceName]) return;
 
-      console.log(`✅ Connecting new active device: ${deviceName}`);
+      console.log(`✅ Connecting new active device: ${deviceName} (${fullName})`);
 
       const options = {
         username: deviceName,
@@ -103,14 +101,13 @@ const useMqtt = () => {
           const receivedDeviceName = topic.split("/")[2];
 
           if (activeDevices[receivedDeviceName]) {
+            const [, fullName] = activeDevices[receivedDeviceName];
             setDeviceLocations((prev) => ({
               ...prev,
-              [receivedDeviceName]: message,
-            }));
-
-            setLastSeen((prev) => ({
-              ...prev,
-              [receivedDeviceName]: Date.now(), // Update last seen time
+              [receivedDeviceName]: {
+                ...message,
+                fullName,
+              },
             }));
           }
         } catch (error) {
@@ -126,7 +123,9 @@ const useMqtt = () => {
     };
   }, [usersData]);
 
-  return { deviceLocations };
+
+
+  return { deviceLocations, stats };
 };
 
 export default useMqtt;

@@ -5,12 +5,17 @@ import "leaflet/dist/leaflet.css";
 import { useMqttContext } from "../../context/MqttContext";
 import L from "leaflet";
 
-const activeDeviceIcon = new L.Icon({
-  iconUrl: "/location/active-device.png",
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
-});
+// Fix Leaflet default icon issues in React
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 const container = {
   hidden: { opacity: 1, scale: 0 },
   visible: {
@@ -25,13 +30,7 @@ const item = {
   visible: { y: 0, opacity: 1 },
 };
 
-const cards = [
-  { id: 1, img: "/totalUser.png", description: "Total Users", number: 10 },
-  { id: 2, img: "/activeUser.png", description: "Active Users", number: 20 },
-  { id: 3, img: "/totalDecive.png", description: "Total Devices", number: 30 },
-  { id: 4, img: "/activeDevice.png", description: "Active Devices", number: 40 },
-  { id: 5, img: "/moreInfo.png", description: "More Info" },
-];
+
 
 const DynamicMapView = ({ locations }) => {
   const map = useMap();
@@ -51,8 +50,15 @@ const DynamicMapView = ({ locations }) => {
 };
 
 const Dashboard = () => {
-  const { deviceLocations } = useMqttContext();
+  const { deviceLocations , stats} = useMqttContext();
   const [filteredLocations, setFilteredLocations] = useState({});
+
+  const cards = [
+  { id: 1, img: "/totalUser.png", description: "Total Users", number: stats?.totalUsers },
+  { id: 3, img: "/totalDecive.png", description: "Total Devices", number: stats?.totalDevices },
+  { id: 4, img: "/activeDevice.png", description: "Active Devices", number: stats?.activeDevices },
+  { id: 5, img: "/moreInfo.png", description: "More Info" },
+];
 
   useEffect(() => {
     setFilteredLocations(deviceLocations);
@@ -98,11 +104,11 @@ const Dashboard = () => {
               if (!location || location.latitude === undefined || location.longitude === undefined) {
                 return null;
               }
-
+              const {fullName} = location;
               return (
-                <Marker key={deviceName} position={[location.latitude, location.longitude]} icon={activeDeviceIcon}>
+                <Marker key={deviceName} position={[location.latitude, location.longitude]}>
                   <Tooltip direction="top" offset={[0, -25]} permanent>
-                    <strong>{deviceName}</strong>
+                    <strong>{fullName}</strong>
                   </Tooltip>
                   <Popup>
                     <strong>{deviceName}</strong>
