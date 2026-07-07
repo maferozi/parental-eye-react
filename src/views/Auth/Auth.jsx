@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import coverImage from '../../assets/images/bg/Cover.png';
+import coverImage from '../../assets/images/bg/Cover.webp';
 function Auth() {
   return (
     <div

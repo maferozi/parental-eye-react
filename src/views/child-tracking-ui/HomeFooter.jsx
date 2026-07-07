@@ -1,8 +1,9 @@
 import React from "react";
 
-export default function FooterComponent() {
+// Forked from Footer.jsx for /home only — keep in sync manually if Footer.jsx changes.
+export default function HomeFooter() {
   return (
-    <footer className="py-4" style={{ backgroundColor: "#d6f5ff" }}>
+    <footer className="home-footer py-4">
       <div className="container">
         <div className="row">
           <div className="col-12 col-md-3 mb-4 mb-md-0">
@@ -21,7 +22,6 @@ export default function FooterComponent() {
             </div>
           </div>
 
-          {/* Company Links */}
           <div className="col-12 col-md-3 mb-4 mb-md-0">
             <h4>Company</h4>
             <ul className="list-unstyled">
@@ -31,29 +31,28 @@ export default function FooterComponent() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-dark text-decoration-none">
-                  Feature
+                <a href="#features" className="text-dark text-decoration-none">
+                  Features
                 </a>
               </li>
               <li>
-                <a href="#" className="text-dark text-decoration-none">
+                <a href="#contact" className="text-dark text-decoration-none">
                   Contact us
                 </a>
               </li>
               <li>
-                <a href="#" className="text-dark text-decoration-none">
+                <a href="#support" className="text-dark text-decoration-none">
                   Support
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Support Links */}
           <div className="col-12 col-md-3 mb-4 mb-md-0">
             <h4>Support</h4>
             <ul className="list-unstyled">
               <li>
-                <a href="#" className="text-dark text-decoration-none">
+                <a href="#support" className="text-dark text-decoration-none">
                   Help center
                 </a>
               </li>
@@ -75,7 +74,6 @@ export default function FooterComponent() {
             </ul>
           </div>
 
-          {/* Stay Up to Date */}
           <div className="col-12 col-md-3">
             <h5>Stay up to date</h5>
             <form>
@@ -85,7 +83,7 @@ export default function FooterComponent() {
                   className="form-control"
                   placeholder="Your email address"
                 />
-                <button className="btn " type="submit">
+                <button className="btn" type="submit">
                   <i className="bi bi-arrow-right"></i>
                 </button>
               </div>

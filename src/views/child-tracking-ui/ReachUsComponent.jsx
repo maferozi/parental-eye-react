@@ -16,7 +16,7 @@ const ReachUs = () => {
         </p>
         <p>
           <strong>Email</strong> <br />
-          Sport@parantaleye.com
+          support@parentaleye.com
         </p>
       </div>
     </div>

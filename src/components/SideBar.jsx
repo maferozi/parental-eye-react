@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import logo from '/logo.png';
+import logo from '/logo.webp';
 import userImg from '../assets/images/user-1.jpg';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import SignInButton from './SignInButton';

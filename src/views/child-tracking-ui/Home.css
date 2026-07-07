@@ -1,0 +1,225 @@
+.home-page {
+  --harbor-navy: #16264d;
+  --dusk-blue: #29459e;
+  --sunrise-coral: #ff7a59;
+  --sandstone-cream: #fff6ee;
+  --mist-blue: #eaf1fb;
+  --slate-gray: #5b6578;
+
+  font-family: "Inter", sans-serif;
+  color: var(--harbor-navy);
+}
+
+.home-page h1,
+.home-page h2,
+.home-page h3,
+.home-page h4,
+.home-page h5 {
+  font-family: "Fraunces", serif;
+}
+
+/* Nav */
+.home-page .home-nav {
+  background-color: var(--harbor-navy);
+}
+
+/* Hero */
+.home-page .home-hero {
+  background: linear-gradient(135deg, var(--harbor-navy) 0%, var(--dusk-blue) 100%);
+}
+
+.home-page .home-hero h1 {
+  color: #fff;
+}
+
+.home-page .home-hero__subhead {
+  color: #d7deef;
+}
+
+.home-page .home-hero__cta-primary {
+  background-color: var(--sunrise-coral);
+  border-color: var(--sunrise-coral);
+  color: #fff;
+  font-weight: 600;
+}
+
+.home-page .home-hero__cta-primary:hover,
+.home-page .home-hero__cta-primary:focus {
+  background-color: #f0623e;
+  border-color: #f0623e;
+  color: #fff;
+}
+
+.home-page .home-hero__cta-secondary {
+  border-color: #fff;
+  color: #fff;
+  font-weight: 600;
+}
+
+.home-page .home-hero__cta-secondary:hover,
+.home-page .home-hero__cta-secondary:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+/* Hero visual */
+.home-page .hero-visual__card {
+  width: min(100%, 320px);
+  margin: 0 auto;
+}
+
+.home-page .pulse-ring {
+  transform-origin: 160px 160px;
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+
+.home-page .pulse-ring--delay {
+  animation-delay: 1.2s;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* Feature overview strip */
+.home-page .feature-overview {
+  background-color: var(--sandstone-cream);
+}
+
+.home-page .feature-icon-frame {
+  background-color: var(--mist-blue);
+  padding: 0.75rem;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.home-page .feature-caption {
+  color: var(--slate-gray);
+}
+
+/* Alternating detail rows */
+.home-page .detail-rows {
+  background-color: var(--sandstone-cream);
+}
+
+.home-page .safe-zone-panel {
+  position: relative;
+  background-color: var(--mist-blue);
+  border-radius: 0 96px 96px 0;
+  padding: 2.5rem;
+  box-shadow: 0 12px 30px rgba(22, 38, 77, 0.12);
+}
+
+.home-page .safe-zone-panel--left {
+  border-radius: 96px 0 0 96px;
+}
+
+.home-page .safe-zone-panel::before {
+  content: "";
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sunrise-coral);
+  box-shadow: 0 0 0 6px rgba(255, 122, 89, 0.18);
+}
+
+.home-page .safe-zone-panel--left::before {
+  right: auto;
+  left: 1.5rem;
+}
+
+.home-page .safe-zone-panel p {
+  color: var(--slate-gray);
+}
+
+/* Testimonials */
+.home-page .testimonials {
+  background-color: var(--harbor-navy);
+}
+
+.home-page .testimonial-card {
+  background-color: var(--mist-blue);
+  border: none;
+}
+
+.home-page .testimonial-card .card-footer {
+  background-color: transparent;
+  border-top: 1px solid rgba(22, 38, 77, 0.1);
+}
+
+.home-page .testimonial-attribution {
+  color: var(--slate-gray);
+}
+
+/* Support / FAQ */
+.home-page .support-section {
+  background-color: var(--mist-blue);
+}
+
+.home-page .support-question {
+  color: var(--harbor-navy);
+}
+
+.home-page .support-answer {
+  color: var(--slate-gray);
+}
+
+/* Contact */
+.home-page .contact-section {
+  background-color: var(--sandstone-cream);
+}
+
+/* Footer */
+.home-page .home-footer {
+  background-color: var(--mist-blue);
+}
+
+/* Accessibility: focus-visible */
+.home-page a:focus-visible,
+.home-page button:focus-visible,
+.home-page input:focus-visible {
+  outline: 3px solid var(--sunrise-coral);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .home-page .pulse-ring {
+    animation: none;
+  }
+
+  .home-page * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Responsive breakpoints */
+@media (max-width: 991px) {
+  .home-page .safe-zone-panel,
+  .home-page .safe-zone-panel--left {
+    border-radius: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-page .hero-visual {
+    display: none;
+  }
+
+  .home-page .safe-zone-panel,
+  .home-page .safe-zone-panel--left {
+    border-radius: 16px;
+  }
+}

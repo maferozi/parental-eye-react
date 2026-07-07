@@ -128,12 +128,12 @@ const Dashboard = () => {
   };
 
   const cards = [
-    { id: 1, img: "/totalUser.png", description: "Total Users", number: stats?.totalUsers },
-    { id: 3, img: "/totalDecive.png", description: "Total Devices", number: stats?.totalDevices },
-    { id: 4, img: "/activeDevice.png", description: "Active Devices", number: stats?.activeDevices },
+    { id: 1, img: "/totalUser.webp", description: "Total Users", number: stats?.totalUsers },
+    { id: 3, img: "/totalDecive.webp", description: "Total Devices", number: stats?.totalDevices },
+    { id: 4, img: "/activeDevice.webp", description: "Active Devices", number: stats?.activeDevices },
     {
       id: 5,
-      img: "/moreInfo.png",
+      img: "/moreInfo.webp",
       description: "More Info",
     },
   ];

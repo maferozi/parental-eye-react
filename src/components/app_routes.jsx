@@ -53,9 +53,6 @@ const ChildReport = Loadable(lazy(() => import("../views/Child/Report")));
 
 // Child Tracking UI Views
 const Homei = Loadable(lazy(() => import("../views/child-tracking-ui/Home")));
-const Contact = Loadable(lazy(() => import("../views/child-tracking-ui/ContactUs")));
-const Support = Loadable(lazy(() => import("../views/child-tracking-ui/Support")));
-const Feature = Loadable(lazy(() => import("../views/child-tracking-ui/Features")));
 
 const app_routes = [
     // Child Tracking UI Routes
@@ -63,18 +60,6 @@ const app_routes = [
       path: "/home",
       exact: true,
       element: <Homei />,
-    },
-    {
-      path: "/contact",
-      element: <Contact />,
-    },
-    {
-      path: "/feature",
-      element: <Feature />,
-    },
-    {
-      path: "/support",
-      element: <Support />,
     },
 
   // Auth Routes
